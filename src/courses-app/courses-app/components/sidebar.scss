@@ -1,0 +1,282 @@
+@use "sass:map";
+
+// Variables
+$sidebar-bg: #f9f9f9;
+$text-primary: #1a1a1a;
+$text-secondary: #666666;
+$hover-bg: #f0f0f0;
+$active-indicator: #404eed;
+$border-color: rgb(207, 207, 207);
+$icon-size: 20px;
+
+// Temi
+$themes: (
+  light: (
+    sidebar-bg: #f9f9f9,
+    text-primary: #1a1a1a,
+    text-secondary: #666666,
+    hover-bg: #f0f0f0,
+    active-indicator: #404eed,
+    border-color: #e5e7eb,
+    badge-bg: #f1f1f1,
+    badge-text: #666666,
+    special-color: #3d69e1
+  ),
+  dark: (
+    sidebar-bg: #1f2937,
+    text-primary: #f9fafb,
+    text-secondary: #9ca3af,
+    hover-bg: #374151,
+    active-indicator: #60a5fa,
+    border-color: #374151,
+    badge-bg: #374151,
+    badge-text: #9ca3af,
+    special-color: #60a5fa
+  )
+);
+
+.sidebar {
+  width: 260px;
+  background-color: $sidebar-bg;
+  border-radius: 6px;
+  border-color: $border-color;
+  overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  // Stilizzazione della scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  // Firefox scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+  
+  &__logo {
+    padding: 20px 24px;
+    border-bottom: 1px solid $border-color;
+    
+    .logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+  
+  &__nav {
+    padding: 12px 0;
+    
+    .nav-group {
+      margin-bottom: 16px;
+      
+      &-title {
+        padding: 0 24px;
+        font-size: 13px;
+        font-weight: 500;
+        color: $text-secondary;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      margin: 0 8px;
+      color: $text-primary;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      position: relative;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: $hover-bg;
+      }
+      
+      &.active {
+        background-color: white;
+        font-weight: 600;
+        
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 3px;
+          height: 100%;
+          background-color: $active-indicator;
+        }
+      }
+      
+      .item-icon {
+        width: $icon-size;
+        height: $icon-size;
+        margin-right: 12px;
+        color: $text-secondary;
+      }
+      
+      .item-label {
+        flex: 1;
+      }
+      
+      .item-badge {
+        background-color: #f1f1f1;
+        color: $text-secondary;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+      
+      .item-expand {
+        color: $text-secondary;
+        font-size: 12px;
+        margin-left: 8px;
+        transition: transform 0.2s ease;
+      }
+    }
+    
+    .nav-submenu, .nav-group-submenu {
+      padding-left: 12px;
+      
+      .nav-item {
+        padding-left: 48px;
+        font-size: 13px;
+      }
+    }
+    
+    .nav-group-submenu {
+      .nav-item {
+        margin-left: 8px;
+        margin-right: 8px;
+        border-radius: 8px;
+        color: $text-secondary;
+        font-weight: normal;
+      }
+    }
+  }
+  
+  &__footer {
+    padding: 16px 24px;
+    border-top: 1px solid $border-color;
+    font-size: 13px;
+    color: $text-secondary;
+  }
+  
+  // Temi
+  @each $theme, $colors in $themes {
+    &-theme-#{$theme} {
+      background-color: map.get($colors, sidebar-bg);
+      
+      .nav-item {
+        color: map.get($colors, text-primary);
+        
+        &:hover {
+          background-color: map.get($colors, hover-bg);
+        }
+        
+        &.active {
+          &:before {
+            background-color: map.get($colors, active-indicator);
+          }
+        }
+        
+        .item-icon {
+          color: map.get($colors, text-secondary);
+        }
+        
+        .item-badge {
+          background-color: map.get($colors, badge-bg);
+          color: map.get($colors, badge-text);
+        }
+        
+        .item-expand {
+          color: map.get($colors, text-secondary);
+        }
+      }
+      
+      .nav-special {
+        color: map.get($colors, special-color);
+        
+        .item-icon {
+          color: map.get($colors, special-color);
+        }
+      }
+      
+      .nav-group-title {
+        color: map.get($colors, text-secondary);
+      }
+      
+      .sidebar__footer {
+        border-top-color: map.get($colors, border-color);
+        color: map.get($colors, text-secondary);
+      }
+      
+      // Scrollbar per tema scuro
+      @if $theme == 'dark' {
+        &::-webkit-scrollbar-thumb {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        &::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        // Firefox scrollbar per tema scuro
+        scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+      }
+    }
+  }
+}
+
+// Modificatori specifici per adattare il componente React all'immagine di riferimento
+.sidebar-ecommerce {
+  background-color: white;
+  
+  .nav-group-products {
+    .nav-item {
+      padding-left: 48px;
+      font-weight: normal;
+      color: $text-secondary;
+      margin-left: 8px;
+      margin-right: 8px;
+      border-radius: 8px;
+      
+      &:hover {
+        background-color: $hover-bg;
+      }
+    }
+  }
+  
+  .nav-item-main {
+    font-weight: 500;
+    
+    .item-icon {
+      color: $text-primary;
+    }
+  }
+  
+  .nav-special {
+    color: #3d69e1;
+    font-weight: 500;
+    
+    .item-icon {
+      color: #3d69e1;
+    }
+  }
+}

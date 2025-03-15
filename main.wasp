@@ -1,3 +1,6 @@
+// ==========================
+// APP CONFIGURATION
+// ==========================
 app OpenSaaS {
   wasp: {
     version: "^0.16.0"
@@ -102,6 +105,9 @@ app OpenSaaS {
   },
 }
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
+// START WASP ROUTES AND PAGES
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
 route LandingPageRoute { path: "/", to: LandingPage }
 page LandingPage {
   component: import LandingPage from "@src/landing-page/LandingPage",
@@ -133,9 +139,7 @@ route EmailVerificationRoute { path: "/email-verification", to: EmailVerificatio
 page EmailVerificationPage {
   component: import { EmailVerificationPage } from "@src/auth/email-and-pass/EmailVerificationPage",
 }
-//#endregion
 
-//#region User
 route AccountRoute { path: "/account", to: AccountPage }
 page AccountPage {
   authRequired: true,
@@ -156,47 +160,7 @@ action updateUserById {
   fn: import { updateUserById } from "@src/user/operations",
   entities: [User]
 }
-//#endregion
 
-//#region Demo AI App
-route DemoAppRoute { path: "/demo-app", to: DemoAppPage }
-page DemoAppPage {
-  authRequired: true,
-  component: import DemoAppPage from "@src/demo-ai-app/DemoAppPage"
-}
-
-action generateGptResponse {
-  fn: import { generateGptResponse } from "@src/demo-ai-app/operations",
-  entities: [User, Task, GptResponse]
-}
-
-action createTask {
-  fn: import { createTask } from "@src/demo-ai-app/operations",
-  entities: [Task]
-}
-
-action deleteTask {
-  fn: import { deleteTask } from "@src/demo-ai-app/operations",
-  entities: [Task]
-}
-
-action updateTask {
-  fn: import { updateTask } from "@src/demo-ai-app/operations",
-  entities: [Task]
-}
-
-query getGptResponses {
-  fn: import { getGptResponses } from "@src/demo-ai-app/operations",
-  entities: [User, GptResponse]
-}
-
-query getAllTasksByUser {
-  fn: import { getAllTasksByUser } from "@src/demo-ai-app/operations",
-  entities: [Task]
-}
-//#endregion
-
-//#region Payment
 route PricingPageRoute { path: "/pricing", to: PricingPage }
 page PricingPage {
   component: import PricingPage from "@src/payment/PricingPage"
@@ -224,32 +188,18 @@ api paymentsWebhook {
   middlewareConfigFn: import { paymentsMiddlewareConfigFn } from "@src/payment/webhook",
   httpRoute: (POST, "/payments-webhook")
 }
-//#endregion
 
-//#region File Upload
-route FileUploadRoute { path: "/file-upload", to: FileUploadPage }
-page FileUploadPage {
-  authRequired: true,
-  component: import FileUpload from "@src/file-upload/FileUploadPage"
+job sendNewsletter {
+  executor: PgBoss,
+  perform: {
+    fn: import { checkAndQueueNewsletterEmails } from "@src/newsletter/sendNewsletter"
+  },
+  schedule: {
+    cron: "0 7 * * 1" // at 7:00 am every Monday
+  },
+  entities: [User]
 }
 
-action createFile {
-  fn: import { createFile } from "@src/file-upload/operations",
-  entities: [User, File]
-}
-
-query getAllFilesByUser {
-  fn: import { getAllFilesByUser } from "@src/file-upload/operations",
-  entities: [User, File]
-}
-
-query getDownloadFileSignedURL {
-  fn: import { getDownloadFileSignedURL } from "@src/file-upload/operations",
-  entities: [User, File]
-}
-//#endregion
-
-//#region Analytics
 query getDailyStats {
   fn: import { getDailyStats } from "@src/analytics/operations",
   entities: [User, DailyStats]
@@ -266,9 +216,7 @@ job dailyStatsJob {
   },
   entities: [User, DailyStats, Logs, PageViewSource]
 }
-//#endregion
 
-//#region Admin Dashboard
 route AdminRoute { path: "/default/admin", to: AnalyticsDashboardPage }
 page AnalyticsDashboardPage {
   authRequired: true,
@@ -323,199 +271,256 @@ page AdminUIButtonsPage {
   component: import AdminUI from "@src/admin/elements/ui-elements/ButtonsPage"
 }
 
-route NotFoundRoute { path: "*", to: NotFoundPage }
-page NotFoundPage {
-  component: import { NotFoundPage } from "@src/client/components/NotFoundPage"
-}
-//#endregion
-
-//#region Contact Form Messages
-// TODO: 
-// add functionality to allow users to send messages to admin
-// and make them accessible via the admin dashboard
 route AdminMessagesRoute { path: "/default/admin/messages", to: AdminMessagesPage }
 page AdminMessagesPage {
   authRequired: true,
   component: import AdminMessages from "@src/messages/MessagesPage"
 }
-//#endregion
 
-//#region Newsletter
-job sendNewsletter {
-  executor: PgBoss,
-  perform: {
-    fn: import { checkAndQueueNewsletterEmails } from "@src/newsletter/sendNewsletter"
-  },
-  schedule: {
-    cron: "0 7 * * 1" // at 7:00 am every Monday
-  },
-  entities: [User]
+// <<<<<<<<<<<<<<<<<<<<<<<<<<
+// FINE WASP
+// <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
+//  START YOUPITER LMS APP   |
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// TODO: da sostituire con una rotta per Youpiter LMS
+route NotFoundRoute { path: "*", to: NotFoundPage }
+page NotFoundPage {
+  component: import { NotFoundPage } from "@src/client/components/NotFoundPage"
 }
-//#endregion
 
-//#region Courses App
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
+// ADMIN ROUTES START
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
 
-//#routes
-route AdminDashboardRoute { path: "/admin", to: AdminDashboardPage }
-page AdminDashboardPage {
+// ==========================
+// COURSE ROUTES - ADMIN
+// ==========================
+
+// ======= /admin ======= Pagina iniziale dell'area amministrativa
+route HomeAdminPageRoute { path: "/admin", to: HomeAdminPage }
+page HomeAdminPage {
   authRequired: true,
-  component: import DashboardPage from "@src/courses-app/pages/admin/DashboardPage"
+  component: import HomeAdminPage from "@src/courses-app/pages/admin/HomeAdminPage"
 }
 
-route CreateCourseRoute { path: "/admin/course", to: CreateCoursePage }
-page CreateCoursePage {
+// ======= /admin/course ======= Creazione corso
+route CourseCreateAdminPageRoute { path: "/admin/course", to: CourseCreateAdminPage }
+page CourseCreateAdminPage {
   authRequired: true,
-  component: import CreateCoursePage from "@src/courses-app/pages/admin/CreateCoursePage"
+  component: import CourseCreateAdminPage from "@src/courses-app/pages/admin/course/CourseCreateAdminPage"
 }
 
-route AdminListCoursesRoute { path: "/admin/courses", to: AdminListCoursesPage }
-page AdminListCoursesPage {
+// ======= /admin/course/:courseId/edit ======= Modifica corso
+route CourseEditAdminPageRoute { path: "/admin/course/:courseId/edit", to: CourseEditAdminPage }
+page CourseEditAdminPage {
   authRequired: true,
-  component: import ListCoursesPage from "@src/courses-app/pages/admin/ListCoursesPage"
+  component: import CourseEditAdminPage from "@src/courses-app/pages/admin/course/CourseEditAdminPage"
 }
 
-route ViewCourseRoute { path: "/admin/course/:courseId", to: ViewCoursePage }
-page ViewCoursePage {
+// ======= /admin/course/:courseId ======= Dettaglio corso
+route CourseViewAdminPageRoute { path: "/admin/course/:courseId", to: CourseViewAdminPage }
+page CourseViewAdminPage {
   authRequired: true,
-  component: import ViewCoursePage from "@src/courses-app/pages/admin/ViewCoursePage"
+  component: import CourseViewAdminPage from "@src/courses-app/pages/admin/course/CourseViewAdminPage"
 }
 
-route EditCourseRoute { path: "/admin/course/:courseId/edit", to: EditCoursePage }
-page EditCoursePage {
+// ======= /admin/courses ======= Lista corsi
+route CourseListAdminPageRoute { path: "/admin/courses", to: CourseListAdminPage }
+page CourseListAdminPage {
   authRequired: true,
-  component: import EditCoursePage from "@src/courses-app/pages/admin/EditCoursePage"
+  component: import CourseListAdminPage from "@src/courses-app/pages/admin/course/CourseListAdminPage"
 }
 
-route EditChaptersRoute { path: "/admin/course/:courseId/chapters/edit", to: EditChaptersPage }
-page EditChaptersPage {
+// ==========================
+// CHAPTER ROUTES - ADMIN
+// ==========================
+
+// ======= /admin/course/:courseId/chapters/edit ======= Modifica capitoli
+route ChapterListEditAdminPageRoute { path: "/admin/course/:courseId/chapters/edit", to: ChapterListEditAdminPage }
+page ChapterListEditAdminPage {
   authRequired: true,
-  component: import EditChaptersPage from "@src/courses-app/pages/admin/EditChaptersPage"
+  component: import ChapterListEditAdminPage from "@src/courses-app/pages/admin/chapter/ChapterListEditAdminPage"
 }
 
-route EditLessonRoute { path: "/lesson/:lessonId/edit", to: EditLessonPage }
-page EditLessonPage {
+// ==========================
+// LESSON ROUTES - ADMIN
+// ==========================
+route LessonEditAdminPageRoute { path: "/lesson/:lessonId/edit", to: LessonEditAdminPage }
+page LessonEditAdminPage {
   authRequired: true,
-  component: import EditLessonPage from "@src/courses-app/pages/admin/EditLessonPage"
+  component: import LessonEditAdminPage from "@src/courses-app/pages/admin/lesson/LessonEditAdminPage"
 }
-// Rotte per l'applicazione
-route HomePageRoute { path: "/app", to: HomePagePage }
-page HomePagePage {
+
+// <<<<<<<<<<<<<<<<<<<<<<<<<<
+// ADMIN ROUTES END
+// <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
+// APP ROUTES START
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// ======= /app ======= Pagina iniziale dell'app
+route HomeAppPageRoute { path: "/app", to: HomeAppPage }
+page HomeAppPage {
   authRequired: true,
-  component: import HomePagePage from "@src/courses-app/pages/app/HomePagePage"
+  component: import HomeAppPage from "@src/courses-app/pages/app/HomeAppPage"
 }
 
-/* Course START */
-route ChapterPageRoute { path: "/app/course/:courseId/chapter/:chapterId", to: ChapterPage }
-page ChapterPage {
+// ==========================
+// AUTH ROUTES - APP
+// ==========================
+
+// ======= /app/auth/ask-password-reset ======= Richiesta reset password
+route AuthAskPasswordResetPageRoute { path: "/app/auth/ask-password-reset", to: AuthAskPasswordResetPage }
+page AuthAskPasswordResetPage {
+  component: import AppAskPasswordResetPage from "@src/courses-app/pages/auth/AuthAskPasswordResetPage"
+}
+
+// ======= /app/auth/signup ======= Registrazione utente
+route AuthSignupPageRoute { path: "/app/auth/signup", to: AuthSignupPage }
+page AuthSignupPage {
+  component: import AuthSignupPage from "@src/courses-app/pages/auth/AuthSignupPage"
+}
+
+// ======= /app/auth/password-reset ======= Reset password
+route AuthPasswordResetPageRoute { path: "/app/auth/password-reset", to: AuthPasswordResetPage }
+page AuthPasswordResetPage {
+  component: import AuthPasswordResetPage from "@src/courses-app/pages/auth/AuthPasswordResetPage"
+}
+
+// ======= /app/auth/email-verification ======= Verifica email
+route AuthEmailVerificationPageRoute { path: "/app/auth/email-verification", to: AuthEmailVerificationPage }
+page AuthEmailVerificationPage {
+  component: import AuthEmailVerificationPage from "@src/courses-app/pages/auth/AuthEmailVerificationPage"
+}
+
+// ======= /app/auth/login ======= Login utente
+route AuthLoginPageRoute { path: "/app/auth/login", to: AuthLoginPage }
+page AuthLoginPage {
+  component: import AppLoginPage from "@src/courses-app/pages/auth/AuthLoginPage"
+}
+
+// ==========================
+// USER - APP
+// ==========================
+
+// ======= /app/me ======= Profilo utente
+route UserViewAppPageRoute { path: "/app/me", to: UserViewAppPage }
+page UserViewAppPage {
   authRequired: true,
-  component: import ChapterPage from "@src/courses-app/pages/app/course/ChapterPage"
+  component: import UserViewAppPage from "@src/courses-app/pages/app/user/UserViewAppPage"
 }
 
-route CoursePageRoute { path: "/app/course/:courseId", to: CoursePage }
-page CoursePage {
+// ======= /app/me/courses ======= Corsi dell'utente autenticato
+route UserCourseListAppPageRoute { path: "/app/me/courses", to: UserCourseListAppPage }
+page UserCourseListAppPage {
   authRequired: true,
-  component: import AppCoursePage from "@src/courses-app/pages/app/course/CoursePage"
+  component: import UserCourseListAppPage from "@src/courses-app/pages/app/user/UserCourseListAppPage"
 }
 
-route CourseNotFoundPageRoute { path: "/app/not-found/course", to: CourseNotFoundPage }
-page CourseNotFoundPage {
+// ======= /app/me/certificates ======= Certificati dell'utente autenticato
+route UserCertificateListAppPageRoute { path: "/app/me/certificates", to: UserCertificateListAppPage }
+page UserCertificateListAppPage {
   authRequired: true,
-  component: import CourseNotFoundPage from "@src/courses-app/pages/app/400s/CourseNotFoundPage"
+  component: import UserCertificateListAppPage from "@src/courses-app/pages/app/user/UserCertificateListAppPage"
 }
 
-route InstructorPageRoute { path: "/app/instructor/:instructorId", to: InstructorPage }
-page InstructorPage {
+// ======= /app/me/settings ======= Impostazioni utente
+route UserSettingsAppPageRoute { path: "/app/me/settings", to: UserSettingsAppPage }
+page UserSettingsAppPage {
   authRequired: true,
-  component: import InstructorPage from "@src/courses-app/pages/app/course/InstructorPage"
+  component: import UserSettingsAppPage from "@src/courses-app/pages/app/user/UserSettingsAppPage"
 }
 
-route LessonPageRoute { path: "/app/course/lesson/:lessonId", to: LessonPage }
-page LessonPage {
+// ==========================
+// COURSE PAGES - APP
+// ==========================
+
+// ======= /app/courses ======= Lista dei corsi
+route CourseListAppRoute { path: "/app/courses", to: CourseListAppPage }
+page CourseListAppPage {
   authRequired: true,
-  component: import LessonPage from "@src/courses-app/pages/app/course/LessonPage"
+  component: import CourseListAppPage from "@src/courses-app/pages/app/course/CourseListAppPage"
 }
 
-route LessonPlayerRoute { path: "/app/play/:courseId/:lessonId", to: LessonPlayer }
-page LessonPlayer {
+// ======= /app/course/search ======= Ricerca corsi
+route CourseSearchAppPageRoute { path: "/app/course/search", to: CourseSearchAppPage }
+page CourseSearchAppPage {
   authRequired: true,
-  component: import LessonPlayer from "@src/courses-app/pages/app/course/LessonPlayer"
+  component: import SearchCoursePage from "@src/courses-app/pages/app/course/CourseSearchAppPage"
 }
 
-route ReviewCourseRoute { path: "/app/course/:courseId/review", to: ReviewCourse }
-page ReviewCourse {
+// ======= /app/course/:courseId ======= Dettaglio corso
+route CourseViewAppPageRoute { path: "/app/course/:courseId", to: CourseViewAppPage }
+page CourseViewAppPage {
   authRequired: true,
-  component: import ReviewCourse from "@src/courses-app/pages/app/course/ReviewCourse"
-}
-/* Course END */
-
-/* Auth START */
-route AppAskPasswordResetPageRoute { path: "/app/auth/ask-password-reset", to: AppAskPasswordResetPage }
-page AppAskPasswordResetPage {
-  component: import AppAskPasswordResetPage from "@src/courses-app/pages/auth/AppAskPasswordResetPage"
+  component: import AppCoursePage from "@src/courses-app/pages/app/course/CourseViewAppPage"
 }
 
-route AppEmailVerificationPageRoute { path: "/app/auth/email-verification", to: AppEmailVerificationPage }
-page AppEmailVerificationPage {
-  component: import AppEmailVerificationPage from "@src/courses-app/pages/auth/AppEmailVerificationPage"
-}
-
-route AppLoginPageRoute { path: "/app/auth/login", to: AppLoginPage }
-page AppLoginPage {
-  component: import AppLoginPage from "@src/courses-app/pages/auth/AppLoginPage"
-}
-
-route AppPasswordResetPageRoute { path: "/app/auth/password-reset", to: AppPasswordResetPage }
-page AppPasswordResetPage {
-  component: import AppPasswordResetPage from "@src/courses-app/pages/auth/AppPasswordResetPage"
-}
-
-route AppSignupPageRoute { path: "/app/auth/signup", to: AppSignupPage }
-page AppSignupPage {
-  component: import AppSignupPage from "@src/courses-app/pages/auth/AppSignupPage"
-}
-/* Auth END */
-
-/* User Me START */
-route MySettingsPageRoute { path: "/app/me/settings", to: MySettingsPage }
-page MySettingsPage {
+// ======= /app/course/:courseId/review ======= Recensioni del corso
+route CourseReviewAppPageRoute { path: "/app/course/:courseId/review", to: CourseReviewAppPage }
+page CourseReviewAppPage {
   authRequired: true,
-  component: import MySettingsPage from "@src/courses-app/pages/app/user/MySettingsPage"
+  component: import CourseReviewAppPage from "@src/courses-app/pages/app/course/CourseReviewAppPage"
 }
 
-route MyCertificatesPageRoute { path: "/app/me/certificates", to: MyCertificatesPage }
-page MyCertificatesPage {
+// ======= /app/course/not-found ======= Pagina corso non trovato
+route CourseNotFoundAppPageRoute { path: "/app/course/not-found", to: CourseNotFoundAppPage }
+page CourseNotFoundAppPage {
   authRequired: true,
-  component: import MyCertificatesPage from "@src/courses-app/pages/app/user/MyCertificatesPage"
+  component: import CourseNotFoundAppPage from "@src/courses-app/pages/app/course/CourseNotFoundAppPage"
 }
 
-route MyCoursesPageRoute { path: "/app/me/courses", to: MyCoursesPage }
-page MyCoursesPage {
+// ==========================
+// CHAPTER PAGES - APP
+// ==========================
+
+// ======= /app/course/:courseId/chapter/:chapterId ======= Dettaglio capitolo del corso
+route ChapterViewAppPageRoute { path: "/app/course/:courseId/chapter/:chapterId", to: ChapterViewAppPage }
+page ChapterViewAppPage {
   authRequired: true,
-  component: import MyCoursesPage from "@src/courses-app/pages/app/user/MyCoursesPage"
+  component: import ChapterViewAppPage from "@src/courses-app/pages/app/chapter/ChapterViewAppPage"
 }
 
-route MyProfilePageRoute { path: "/app/me", to: MyProfilePage }
-page MyProfilePage {
+// ==========================
+// INSTRUCTOR PAGES - APP
+// ==========================
+
+// ======= /app/instructor/:instructorId ======= Dettaglio istruttore
+route InstructorViewAppPageRoute { path: "/app/instructor/:instructorId", to: InstructorViewAppPage }
+page InstructorViewAppPage {
   authRequired: true,
-  component: import MyProfilePage from "@src/courses-app/pages/app/user/MyProfilePage"
+  component: import InstructorPage from "@src/courses-app/pages/app/instructor/InstructorViewAppPage"
 }
-/* User Me END */
 
-/* Landings START */
-route AllCoursesPageRoute { path: "/app/courses", to: AllCoursesPage }
-page AllCoursesPage {
+// ==========================
+// LESSON PAGES - APP
+// ==========================
+
+// ======= /app/course/lesson/:lessonId ======= Dettaglio lezione del corso
+route LessonViewAppPageRoute { path: "/app/course/lesson/:lessonId", to: LessonViewAppPage }
+page LessonViewAppPage {
   authRequired: true,
-  component: import AllCoursesPage from "@src/courses-app/pages/app/AllCoursesPage"
+  component: import LessonViewAppPage from "@src/courses-app/pages/app/lesson/LessonViewAppPage"
 }
 
-route SearchCoursePageRoute { path: "/app/search", to: SearchCoursePage }
-page SearchCoursePage {
+// ======= /app/lesson/:lessonId/play ======= Riproduzione lezione
+route LessonPlayAppPageRoute { path: "/app/lesson/:lessonId/play", to: LessonPlayAppPage }
+page LessonPlayAppPage {
   authRequired: true,
-  component: import SearchCoursePage from "@src/courses-app/pages/app/SearchCoursePage"
+  component: import LessonPlayAppPage from "@src/courses-app/pages/app/lesson/LessonPlayAppPage"
 }
-/* Landings END */
+// <<<<<<<<<<<<<<<<<<<<<<<<<<
+// APP ROUTES END
+// <<<<<<<<<<<<<<<<<<<<<<<<<<
 
-//#queries 
+// ==========================
+// COURSE - OPERATIONS
+// ==========================
 query getCourse {
   fn: import { getCourse } from "@src/courses-app/operations/CourseOperations",
   entities: [Course]
@@ -526,11 +531,17 @@ query getCourses {
   entities: [Course]
 }
 
+// ==========================
+// COURSE CATEGORIES - OPERATIONS
+// ==========================
 query getCourseCategories {
   fn: import { getCourseCategories } from "@src/courses-app/operations/CourseOperations",
   entities: [CourseCategory]
 }
 
+// ==========================
+// COURSE CHAPTERS - OPERATIONS
+// ==========================
 query getCourseChapters {
   fn: import { getCourseChapters } from "@src/courses-app/operations/CourseOperations",
   entities: [CourseChapter]
@@ -551,6 +562,11 @@ query getLessonContents {
   entities: [LessonContent]
 }
 
+query getChapterNextLesson {
+  fn: import { getChapterNextLesson } from "@src/courses-app/operations/CourseOperations",
+  entities: [CourseChapter, Lesson, CourseEnrollment, StudentProgress]
+}
+
 query getLessonsByChapterIDs {
   fn: import { getLessonsByChapterIDs } from "@src/courses-app/operations/LessonOperations",
   entities: [LessonsInChapters]
@@ -563,7 +579,9 @@ apiNamespace coursesAppNamespaceMiddlewareFn {
   middlewareConfigFn: import { coursesAppNamespaceMiddlewareFn } from "@src/courses-app/api/GeneralApi.ts",
   path: "/api"
 }
-
+// ==========================
+// COURSE - API
+// ==========================
 api CreateCourse { 
   fn: import { createCourse } from "@src/courses-app/api/AdminApi.ts",
   httpRoute: (POST, "/api/admin/course"),
@@ -635,27 +653,6 @@ api CourseEnrollment {
 }
 
 // QUIZ
-api CreateQuiz { 
-  fn: import { createQuiz } from "@src/courses-app/api/QuizApi",
-  httpRoute: (POST, "/api/admin/quiz"),
-  auth: true,
-  entities: [Quiz, QuizTranslation]
-}
-
-api UpdateQuiz { 
-  fn: import { updateQuiz } from "@src/courses-app/api/QuizApi.ts",
-  httpRoute: (PUT, "/api/admin/quiz/:quizId"),
-  auth: true,
-  entities: [Quiz, QuizTranslation]
-}
-
-api DeleteQuiz { 
-  fn: import { deleteQuiz } from "@src/courses-app/api/QuizApi.ts",
-  httpRoute: (DELETE, "/api/admin/quiz/:quizId"),
-  auth: true,
-  entities: [Quiz]
-}
-
 api AssociateLessonQuiz { 
   fn: import { associateLessonQuiz } from "@src/courses-app/api/QuizApi",
   httpRoute: (POST, "/api/admin/lesson/:lessonId/quiz"),
@@ -696,8 +693,32 @@ query getLessonQuizzes {
   fn: import { getLessonQuizzes } from "@src/courses-app/operations/QuizOperations",
   entities: [Lesson, Quiz, LessonQuiz]
 }
+// ==========================
+// QUIZ - API
+// ==========================
+api CreateQuiz { 
+  fn: import { createQuiz } from "@src/courses-app/api/QuizApi",
+  httpRoute: (POST, "/api/admin/quiz"),
+  auth: true,
+  entities: [Quiz, QuizTranslation]
+}
 
-// Question
+api UpdateQuiz { 
+  fn: import { updateQuiz } from "@src/courses-app/api/QuizApi.ts",
+  httpRoute: (PUT, "/api/admin/quiz/:quizId"),
+  auth: true,
+  entities: [Quiz, QuizTranslation]
+}
+
+api DeleteQuiz { 
+  fn: import { deleteQuiz } from "@src/courses-app/api/QuizApi.ts",
+  httpRoute: (DELETE, "/api/admin/quiz/:quizId"),
+  auth: true,
+  entities: [Quiz]
+}
+// ==========================
+// QUESTION - API
+// ==========================
 api CreateQuestion { 
   fn: import { createQuestion } from "@src/courses-app/api/QuestionApi",
   httpRoute: (POST, "/api/admin/question"),
@@ -718,7 +739,9 @@ api DeleteQuestion {
   auth: true,
   entities: [Question]
 }
-
+// ==========================
+// QUESTION - OPERATIONS
+// ==========================
 query getQuestion {
   fn: import { getQuestion } from "@src/courses-app/operations/QuestionOperations",
   entities: [Question, QuestionTranslation, Option, OptionTranslation]
@@ -728,6 +751,3 @@ query getQuestionsBySkill {
   fn: import { getQuestionsBySkill } from "@src/courses-app/operations/QuestionOperations",
   entities: [Question, QuestionTranslation, Option, OptionTranslation]
 }
-
-
-//#endregion
