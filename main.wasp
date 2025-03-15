@@ -582,11 +582,53 @@ apiNamespace coursesAppNamespaceMiddlewareFn {
 // ==========================
 // COURSE - API
 // ==========================
-api CreateCourse { 
-  fn: import { createCourse } from "@src/courses-app/api/AdminApi.ts",
+
+// ======= /api/admin/course ======= Creazione corso
+api CourseCreate { 
+  fn: import { courseCreate } from "@src/courses-app/api/admin/CourseApi",
   httpRoute: (POST, "/api/admin/course"),
   auth: true,
   entities: [Course]
+}
+
+// ======= /api/admin/course/:courseId ======= Aggiornamento corso
+api CourseUpdate { 
+  fn: import { courseUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId"),
+  auth: true,
+  entities: [Course, CourseCategory]
+}
+
+// ======= /api/admin/course/:courseId/cover ======= Aggiornamento copertina corso
+api CourseCoverUpdate { 
+  fn: import { courseCoverUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId/cover"),
+  auth: true,
+  entities: [Course]
+}
+
+// ======= /api/admin/course/:courseId/categories ======= Aggiornamento categorie corso
+api CourseCategoryUpdate { 
+  fn: import { courseCategoryUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId/categories"),
+  auth: true,
+  entities: [Course, CourseCategory]
+}
+
+// ======= /api/admin/course/:courseId/instructors ======= Aggiornamento istruttori corso
+api CourseInstructorUpdate { 
+  fn: import { courseInstructorUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId/instructors"),
+  auth: true,
+  entities: [Course, UserInstructor]
+}
+
+// ======= /api/admin/lesson ======= Creazione lezione
+api LessonCreate { 
+  fn: import { lessonCreate } from "@src/courses-app/api/admin/LessonApi",
+  httpRoute: (POST, "/api/admin/lesson"),
+  auth: true,
+  entities: [Lesson, LessonsInChapters, LessonContent]
 }
 
 api CreateCourseChapter { 
@@ -596,13 +638,6 @@ api CreateCourseChapter {
   entities: [CourseChapter]
 }
 
-api CreateLesson { 
-  fn: import { createLesson } from "@src/courses-app/api/AdminApi.ts",
-  httpRoute: (POST, "/api/admin/lesson"),
-  auth: true,
-  entities: [Lesson, LessonsInChapters, LessonContent]
-}
-
 api UpdateLessonContent {
   fn: import { updateLessonContent } from "@src/courses-app/api/AdminApi.ts",
   httpRoute: (PUT, "/api/admin/lesson/:lessonId/content"),
@@ -610,26 +645,6 @@ api UpdateLessonContent {
   entities: [LessonContent]
 }
 
-api UpdateCourseCategories { 
-  fn: import { updateCourseCategories } from "@src/courses-app/api/AdminApi.ts",
-  httpRoute: (PUT, "/api/admin/course/:courseId/categories"),
-  auth: true,
-  entities: [Course, CourseCategory]
-}
-
-api UpdateCourseInstructors { 
-  fn: import { updateCourseInstructors } from "@src/courses-app/api/AdminApi.ts",
-  httpRoute: (PUT, "/api/admin/course/:courseId/instructors"),
-  auth: true,
-  entities: [Course, UserInstructor]
-}
-
-api UpdateCourse { 
-  fn: import { updateCourse } from "@src/courses-app/api/AdminApi.ts",
-  httpRoute: (PUT, "/api/admin/course/:courseId"),
-  auth: true,
-  entities: [Course, CourseCategory]
-}
 
 api GetUploadPresignedURL { 
   fn: import { getUploadPresignedURL } from "@src/courses-app/api/AdminApi.ts",
@@ -638,12 +653,6 @@ api GetUploadPresignedURL {
   entities: [Course]
 }
 
-api UpdateCourseCover { 
-  fn: import { updateCourseCover } from "@src/courses-app/api/AdminApi.ts",
-  httpRoute: (PUT, "/api/admin/course/:courseId/cover"),
-  auth: true,
-  entities: [Course]
-}
 
 api CourseEnrollment { 
   fn: import { courseEnrollment } from "@src/courses-app/api/CourseApi",
