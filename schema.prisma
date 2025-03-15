@@ -1,0 +1,773 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  email               String?  @unique
+  username            String?  @unique
+  lastActiveTimestamp DateTime @default(now())
+  isAdmin             Boolean  @default(false)
+
+  paymentProcessorUserId        String?   @unique
+  lemonSqueezyCustomerPortalUrl String? // You can delete this if you're not using Lemon Squeezy as your payments processor.
+  subscriptionStatus            String? // 'active', 'cancel_at_period_end', 'past_due', 'deleted'
+  subscriptionPlan              String? // 'hobby', 'pro'
+  sendNewsletter                Boolean   @default(false)
+  datePaid                      DateTime?
+  credits                       Int       @default(3)
+  
+  // User Profile
+  firstName                     String?
+  lastName                      String?
+  isCompany                     Boolean   @default(false)
+
+  gptResponses        GptResponse[]
+  contactFormMessages ContactFormMessage[]
+  tasks               Task[]
+  files               File[]
+
+  // Course App
+  instructor      UserInstructor?
+  enrollments     CourseEnrollment[]
+  courseProgress  StudentProgress[]
+  certificates    CertificateAssertion[]
+  skills          UserSkill[]
+  UserQuizAttempt UserQuizAttempt[]
+  QuizAttempt     QuizAttempt[]
+  UserBadge       UserBadge[]
+  UserStreak      UserStreak[]
+}
+
+model GptResponse {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  content String
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  description String
+  time        String  @default("1")
+  isDone      Boolean @default(false)
+}
+
+model File {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  name      String
+  type      String
+  key       String
+  uploadUrl String
+}
+
+model DailyStats {
+  id   Int      @id @default(autoincrement())
+  date DateTime @unique @default(now())
+
+  totalViews                Int    @default(0)
+  prevDayViewsChangePercent String @default("0")
+  userCount                 Int    @default(0)
+  paidUserCount             Int    @default(0)
+  userDelta                 Int    @default(0)
+  paidUserDelta             Int    @default(0)
+  totalRevenue              Float  @default(0)
+  totalProfit               Float  @default(0)
+
+  sources PageViewSource[]
+}
+
+model PageViewSource {
+  name String
+  date DateTime @default(now())
+
+  dailyStats   DailyStats? @relation(fields: [dailyStatsId], references: [id])
+  dailyStatsId Int?
+
+  visitors Int
+
+  @@id([date, name])
+}
+
+model Logs {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  message String
+  level   String
+}
+
+model ContactFormMessage {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  content   String
+  isRead    Boolean   @default(false)
+  repliedAt DateTime?
+}
+
+// Tabella che contiene i corsi
+model Course {
+  id               String              @id @default(uuid())
+  title            String
+  shortDescription String?
+  description      String
+  isPublished      Boolean             @default(false)
+  image            String              @default("standard-image.png")
+
+  categories       CourseCategory[]
+  chapters         CourseChapter[]
+  lessons          LessonsInChapters[]
+  lessonsInCourses LessonsInCourses[]
+  instructors      CourseInstructor[]
+  students         CourseEnrollment[]
+  studentsProgress StudentProgress[]
+  certificates     Certificate[]
+}
+
+// Tabella che contiene le categorie dei corsi
+model CourseCategory {
+  id      Int      @id @default(autoincrement())
+  name    String
+  courses Course[]
+}
+
+// Tabella che contiene gli utenti istruttori dei corsi
+model UserInstructor {
+  id                 String                @id @default(uuid())
+  user               User                  @relation(fields: [userId], references: [id])
+  userId             String                @unique
+  coursesInstructors CourseInstructor[]
+}
+
+// Tabella che contiene gli istruttori del corso
+model CourseInstructor {
+  id           Int            @id @default(autoincrement())
+  course       Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId     String
+  
+  instructor   UserInstructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  instructorId String
+
+  @@unique([courseId, instructorId])
+}
+
+// Tabella che contiene le singole lezioni
+model Lesson {
+  id            String              @id @default(uuid())
+  title         String
+  courses       LessonsInCourses[]
+  chapters      LessonsInChapters[]
+  LessonContent LessonContent[]
+
+  versions         LessonVersion[] // Relazione con le versioni
+  activeVersion    LessonVersion?    @relation("ActiveVersion", fields: [activeVersionId], references: [id])
+  activeVersionId  String?           @unique
+  studentsProgress StudentProgress[]
+  skills           LessonSkill[]
+  LessonQuiz       LessonQuiz[]
+  UserQuizAttempt  UserQuizAttempt[]
+
+  currentForUsers   CourseEnrollment[]  // Utenti che hanno questa come lezione corrente
+  lastCompletedFor  CourseEnrollment[]  @relation("LastCompleted") // Utenti che hanno questa come ultima completata
+}
+
+// Tabella ponte che contiene i capitoli dei corsi
+model CourseChapter {
+  id       String               @id @default(uuid())
+  title    String
+  position Int                  @default(0) // Nuovo campo per l'ordine dei capitoli
+  course   Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String
+  lessons  LessonsInChapters[]
+
+  @@unique([courseId, position]) // Garantisce posizioni uniche all'interno di un corso
+}
+
+// Tabella ponte che contiene le lezioni all'interno dei capitoli
+model LessonsInChapters {
+  id              String            @id @default(uuid())
+  lesson          Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId        String
+  chapter         CourseChapter     @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  chapterId       String
+  course          Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId        String
+  lessonVersion   LessonVersion     @relation(fields: [lessonVersionId], references: [id])
+  lessonVersionId String // Versione specifica della lezione usata in questo capitolo
+  position        Int               @default(0) // Nuovo campo per l'ordine delle lezioni in un capitolo
+
+  @@unique([chapterId, position]) // Garantisce posizioni uniche all'interno di un capitolo
+}
+
+// Tabella Ponte che contiene le lezioni all'interno dei corsi
+model LessonsInCourses {
+  id              String        @id @default(uuid())
+  lesson          Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId        String
+  course          Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId        String
+  lessonVersion   LessonVersion @relation(fields: [lessonVersionId], references: [id], onDelete: Cascade)
+  lessonVersionId String // Versione specifica della lezione usata in questo corso
+}
+
+// Tabella che contiene il contenuto delle lezioni
+model LessonContent {
+  content  Json
+  lang     String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String
+
+  version   LessonVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId String
+
+  @@id(name: "lessonContentId", [lessonId, lang, versionId])
+}
+
+// Versione delle lezioni
+model LessonVersion {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  versionNumber Int // Numero progressivo della versione
+  isPublished   Boolean  @default(false)
+
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String
+
+  lessonContents LessonContent[] // Relazione con i contenuti in diverse lingue
+
+  // Relazione inversa per la versione attiva
+  activeFor        Lesson?             @relation("ActiveVersion")
+  studentsProgress StudentProgress[] // Relazione con i progressi degli utenti
+  chapters         LessonsInChapters[]
+  LessonsInCourses LessonsInCourses[]
+  LessonQuiz       LessonQuiz[]
+
+  @@unique([lessonId, versionNumber]) // Versioni uniche per lezione
+}
+
+// Iscrizioni ai corsi
+model CourseEnrollment {
+  id                  String    @id @default(uuid())
+  student             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              String
+  course              Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId            String
+  enrolledAt          DateTime  @default(now())
+  completedAt         DateTime?
+
+  currentLessonId   String?   // ID dell'ultima lezione accessibile
+  currentLesson     Lesson?   @relation(fields: [currentLessonId], references: [id])
+  lastCompletedId   String?   // ID dell'ultima lezione completata
+  lastCompleted     Lesson?   @relation("LastCompleted", fields: [lastCompletedId], references: [id])
+  progressPercentage Int      @default(0) // Percentuale di completamento
+
+  @@unique([userId, courseId])
+}
+
+// Tracciamento progressi
+model StudentProgress {
+  id              String        @id @default(uuid())
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  course          Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId        String
+  lesson          Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId        String
+  lessonVersion   LessonVersion @relation(fields: [lessonVersionId], references: [id], onDelete: Cascade)
+  lessonVersionId String
+  completed       Boolean       @default(false)
+  completedAt     DateTime?
+  lastAccessed    DateTime      @default(now())
+  timeSpent       Int           @default(0) // Tempo in secondi
+
+  @@unique([userId, courseId, lessonId])
+}
+
+model Certificate {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  name        String
+  description String
+  imageUrl    String
+  criteriaUrl String?
+
+  skills Skill[]
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  assertions CertificateAssertion[]
+}
+
+model CertificateAssertion {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  certificate   Certificate @relation(fields: [certificateId], references: [id])
+  certificateId String
+
+  recipient User   @relation(fields: [userId], references: [id])
+  userId    String
+
+  issuedOn  DateTime  @default(now())
+  expiresOn DateTime?
+
+  // URL pubblico per la verifica
+  verificationUrl String @unique
+
+  // Revoca
+  revoked       Boolean @default(false)
+  revokedReason String?
+}
+
+// Competenze
+model Skill {
+  id            String          @id @default(uuid())
+  name          String          @unique
+  description   String?
+  lessons       LessonSkill[]
+  users         UserSkill[]
+  certificates  Certificate[]
+  QuestionSkill QuestionSkill[]
+}
+
+model LessonSkill {
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String
+  skill    Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillId  String
+  level    Int    @default(1)
+
+  @@id([lessonId, skillId])
+}
+
+model UserSkill {
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillId   String
+  level     Int      @default(1)
+  updatedAt DateTime @default(now())
+
+  @@id([userId, skillId])
+}
+
+model Quiz {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Quiz può essere usato in più lezioni
+  lessonQuizzes LessonQuiz[]
+
+  // Se il quiz è disponibile/attivo
+  isActive Boolean @default(true)
+
+  // Contenuti del quiz in diverse lingue
+  translations QuizTranslation[]
+
+  // Relazione many-to-many con le domande
+  quizQuestions QuizQuestion[]
+
+  // Tentativi degli utenti (ora tramite UserQuizAttempt)
+  userAttempts UserQuizAttempt[]
+
+  // Soglia di superamento (percentuale)
+  passingThreshold Int           @default(70)
+  QuizAttempt      QuizAttempt[]
+}
+
+model QuizTranslation {
+  id String @id @default(uuid())
+
+  // Relazione con il quiz
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId String
+
+  // Lingua
+  language String
+
+  // Contenuto tradotto
+  title        String
+  description  String?
+  instructions String?
+
+  @@unique([quizId, language])
+}
+
+model Question {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Tipo di domanda (multipla, vero/falso, ecc.)
+  type QuestionType @default(MULTIPLE_CHOICE)
+
+  // Peso della domanda nel punteggio totale
+  weight Int @default(1)
+
+  // Relazione con skill
+  skills QuestionSkill[]
+
+  // Traduzioni delle domande
+  translations QuestionTranslation[]
+
+  // Opzioni di risposta
+  options Option[]
+
+  // Relazione many-to-many con i quiz
+  quizQuestions QuizQuestion[]
+
+  // Risposte degli utenti
+  userAnswers UserAnswer[]
+  Answer      Answer[]
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  // Altri tipi possibili in futuro
+}
+
+model QuestionTranslation {
+  id String @id @default(uuid())
+
+  // Relazione con la domanda
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+
+  // Lingua
+  language String
+
+  // Contenuto tradotto
+  text        String
+  explanation String? // Spiegazione mostrata dopo la risposta
+
+  @@unique([questionId, language])
+}
+
+model QuestionSkill {
+  // Relazione con la domanda
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+
+  // Relazione con la skill
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillId String
+
+  // Livello di skill testato da questa domanda
+  level Int @default(1)
+
+  @@id([questionId, skillId])
+}
+
+model QuizQuestion {
+  // Relazione con quiz
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId String
+
+  // Relazione con domanda
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+
+  // Posizione della domanda nel quiz
+  position Int
+
+  @@id([quizId, questionId])
+  @@unique([quizId, position])
+}
+
+model LessonQuiz {
+  id String @id @default(uuid())
+
+  // Relazione con quiz
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId String
+
+  // Relazione con lezione
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String
+
+  // Relazione con la versione della lezione (opzionale)
+  lessonVersion   LessonVersion? @relation(fields: [lessonVersionId], references: [id])
+  lessonVersionId String?
+
+  // Tipo di quiz nella lezione
+  quizType LessonQuizType @default(STANDARD)
+
+  // Posizione del quiz nella lezione
+  position Int @default(0)
+
+  // Flag se questo quiz è obbligatorio per completare la lezione
+  isRequired Boolean @default(true)
+
+  // Flag se questo quiz permette di saltare la lezione se superato
+  canSkipLesson   Boolean           @default(false)
+  UserQuizAttempt UserQuizAttempt[]
+
+  @@unique([lessonId, quizId])
+  @@unique([lessonId, position])
+}
+
+enum LessonQuizType {
+  STANDARD // Quiz normale
+  PRACTICE // Quiz di pratica non valutato
+}
+
+model UserQuizAttempt {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  // Relazione con utente
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Relazione con quiz
+  quiz   Quiz   @relation(fields: [quizId], references: [id])
+  quizId String
+
+  // Relazione con la lezione specifica in cui è stato fatto il tentativo
+  lessonQuiz   LessonQuiz? @relation(fields: [lessonQuizId], references: [id])
+  lessonQuizId String?
+
+  // Relazione diretta con la lezione per query più efficienti
+  lesson   Lesson? @relation(fields: [lessonId], references: [id])
+  lessonId String?
+
+  // Stato del tentativo
+  status AttemptStatus @default(IN_PROGRESS)
+
+  // Punteggio ottenuto (percentuale)
+  score Float?
+
+  // Tempo impiegato (in secondi)
+  duration Int?
+
+  // Flag per tracciare se ha superato il quiz
+  isPassed Boolean?
+
+  // Le risposte dell'utente per questo tentativo
+  answers UserAnswer[]
+
+  @@unique([userId, quizId, lessonQuizId, startedAt])
+}
+
+model QuizAttempt {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  // Relazione con utente
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Relazione con quiz
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId String
+
+  // Stato del tentativo
+  status AttemptStatus @default(IN_PROGRESS)
+
+  // Punteggio ottenuto (percentuale)
+  score Float?
+
+  // Le risposte dell'utente
+  answers Answer[]
+
+  // Tempo impiegato (in secondi)
+  duration Int?
+
+  // Flag per tracciare se ha superato il quiz
+  isPassed Boolean?
+
+  @@unique([userId, quizId, createdAt])
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+model Option {
+  id String @id @default(uuid())
+
+  // Relazione con la domanda
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+
+  // Indicatore se è la risposta corretta
+  isCorrect Boolean @default(false)
+
+  // Posizione dell'opzione
+  position Int
+
+  // Traduzioni delle opzioni
+  translations OptionTranslation[]
+
+  // Risposte degli utenti che hanno scelto questa opzione
+  selectedBy Answer[]
+  UserAnswer UserAnswer[]
+
+  @@unique([questionId, position])
+}
+
+model OptionTranslation {
+  id String @id @default(uuid())
+
+  // Relazione con l'opzione
+  option   Option @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  optionId String
+
+  // Lingua
+  language String
+
+  // Contenuto tradotto
+  text String
+
+  @@unique([optionId, language])
+}
+
+model Answer {
+  id String @id @default(uuid())
+
+  // Relazione con il tentativo
+  attempt   QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  attemptId String
+
+  // Relazione con la domanda
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+
+  // Relazione con l'opzione scelta
+  selectedOption Option @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  optionId       String
+
+  // Tempostamp di quando è stata data la risposta
+  answeredAt DateTime @default(now())
+
+  // Flag per sapere se la risposta è corretta
+  isCorrect Boolean
+
+  @@unique([attemptId, questionId])
+}
+
+model UserAnswer {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  // Relazione con il tentativo dell'utente
+  attempt   UserQuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  attemptId String
+
+  // Relazione con la domanda
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String
+
+  // Relazione con l'opzione scelta
+  selectedOption Option @relation(fields: [optionId], references: [id])
+  optionId       String
+
+  // Timestamp di quando è stata data la risposta
+  answeredAt DateTime @default(now())
+
+  // Flag per sapere se la risposta è corretta
+  isCorrect Boolean
+
+  // Tempo impiegato per rispondere (in secondi)
+  responseTime Int?
+
+  @@unique([attemptId, questionId])
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String
+  imageUrl    String
+  category    String
+  createdAt   DateTime @default(now())
+
+  // Relazioni
+  userBadges  UserBadge[]
+  streakTypes BadgeStreak[] // Nuova relazione con i tipi di streak
+}
+
+model UserBadge {
+  id       String   @id @default(uuid())
+  user     User     @relation(fields: [userId], references: [id])
+  userId   String
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+model StreakType {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relazioni
+  userStreaks UserStreak[]
+  badges      BadgeStreak[] // Nuova relazione con i badge
+}
+
+model UserStreak {
+  id            String     @id @default(uuid())
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  streakType    StreakType @relation(fields: [streakTypeId], references: [id])
+  streakTypeId  String
+  currentCount  Int        @default(0)
+  highestCount  Int        @default(0)
+  lastUpdatedAt DateTime   @default(now())
+
+  @@unique([userId, streakTypeId])
+  @@index([userId, streakTypeId])
+}
+
+model BadgeStreak {
+  id           String     @id @default(uuid())
+  badge        Badge      @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  badgeId      String
+  streakType   StreakType @relation(fields: [streakTypeId], references: [id], onDelete: Cascade)
+  streakTypeId String
+  threshold    Int // Numero di streak necessari per guadagnare il badge
+
+  @@unique([badgeId, streakTypeId, threshold])
+}

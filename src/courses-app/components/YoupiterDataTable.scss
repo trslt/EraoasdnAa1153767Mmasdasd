@@ -1,0 +1,358 @@
+// Import del modulo color di Sass
+@use "sass:color";
+
+// Variables
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+$border-color: #e2e8f0;
+$border-radius: 8px;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$background-color: #fff;
+$background-alt: #f8fafc;
+$background-hover: #f1f5f9;
+$text-primary: #334155;
+$text-secondary: #64748b;
+$text-muted: #94a3b8;
+$selected-bg: #f0f9ff;
+$selected-bg-hover: #e0f2fe;
+$transition-speed: 0.2s;
+$purple: #7c3aed;
+
+// DataTable Component
+.data-table-container {
+  font-family: $font-family;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  background-color: $background-color;
+  width: 100%;
+}
+
+.data-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid $border-color;
+  background-color: $background-alt;
+}
+
+.data-table-search {
+  flex: 1;
+  max-width: 320px;
+  
+  &-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius - 2px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color $transition-speed ease;
+    
+    &:focus {
+      border-color: color.adjust($border-color, $lightness: -15%);
+    }
+  }
+}
+
+.data-table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+// Corregge il warning "mixed-decls"
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  
+  &-wrapper {
+    overflow-x: auto;
+  }
+  
+  &-th {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    color: $text-secondary;
+    background-color: $background-alt;
+    border-bottom: 1px solid $border-color;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    
+    &.sortable {
+      cursor: pointer;
+      user-select: none;
+      
+      &:hover {
+        background-color: $background-hover;
+      }
+    }
+  }
+  
+  &-td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid $border-color;
+    color: $text-primary;
+  }
+  
+  &-row {
+    transition: background-color $transition-speed * 0.5 ease;
+    
+    &:hover {
+      background-color: $background-alt;
+    }
+    
+    &.selected {
+      background-color: $selected-bg;
+      
+      &:hover {
+        background-color: $selected-bg-hover;
+      }
+    }
+  }
+  
+  &-checkbox {
+    &-header,
+    &-cell {
+      width: 40px;
+      text-align: center;
+      padding: 12px 8px;
+      
+      input {
+        cursor: pointer;
+      }
+    }
+  }
+  
+  &-empty-state {
+    padding: 32px 16px;
+    text-align: center;
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+.data-table-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-top: 1px solid $border-color;
+  background-color: $background-alt;
+  
+  &-button {
+    padding: 6px 12px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius - 2px;
+    background-color: $background-color;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all $transition-speed ease;
+    
+    &:hover:not(:disabled) {
+      background-color: $background-hover;
+      border-color: color.adjust($border-color, $lightness: -10%);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  
+  &-info {
+    font-size: 14px;
+    color: $text-secondary;
+  }
+}
+
+// Additional styling for the example components
+.user-cell,
+.company-cell,
+.phone-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .company-icon,
+  .country-flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+  }
+}
+
+// Custom action buttons for the example
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: $border-radius - 2px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+  
+  &.import-button {
+    background-color: $background-color;
+    border: 1px solid $border-color;
+    color: $text-primary;
+    
+    &:hover {
+      background-color: $background-hover;
+    }
+  }
+  
+  &.primary {
+    background-color: $purple;
+    color: white;
+    border: none;
+    
+    &:hover {
+      background-color: color.adjust($purple, $lightness: -5%);
+    }
+  }
+  
+  .icon {
+    font-size: 16px;
+  }
+}
+
+// Responsive behavior
+@media screen and (max-width: 768px) {
+  .data-table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    
+    .data-table-search {
+      max-width: 100%;
+      width: 100%;
+    }
+    
+    .data-table-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+  
+  .data-table-pagination {
+    flex-wrap: wrap;
+  }
+}
+
+// Dark mode support (optional)
+@media (prefers-color-scheme: dark) {
+  .data-table-container {
+    // Dark mode colors
+    --border-color: #334155;
+    --background-color: #1e293b;
+    --background-alt: #0f172a;
+    --background-hover: #1e293b;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --selected-bg: #0c4a6e;
+    --selected-bg-hover: #075985;
+    --border-hover: #475569; // Lighter border for hover states
+    
+    border-color: var(--border-color);
+    background-color: var(--background-color);
+    
+    .data-table-header,
+    .data-table-pagination {
+      background-color: var(--background-alt);
+      border-color: var(--border-color);
+    }
+    
+    .data-table-search-input {
+      background-color: var(--background-color);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+      
+      &::placeholder {
+        color: var(--text-muted);
+      }
+      
+      &:focus {
+        border-color: var(--text-muted);
+      }
+    }
+    
+    .data-table-th {
+      background-color: var(--background-alt);
+      color: var(--text-secondary);
+      border-color: var(--border-color);
+      
+      &.sortable:hover {
+        background-color: var(--background-hover);
+      }
+    }
+    
+    .data-table-td {
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    
+    .data-table-row {
+      &:hover {
+        background-color: var(--background-hover);
+      }
+      
+      &.selected {
+        background-color: var(--selected-bg);
+        
+        &:hover {
+          background-color: var(--selected-bg-hover);
+        }
+      }
+    }
+    
+    .data-table-empty-state {
+      color: var(--text-muted);
+    }
+    
+    .data-table-pagination-button {
+      background-color: var(--background-color);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+      
+      &:hover:not(:disabled) {
+        background-color: var(--background-hover);
+        border-color: var(--border-hover);
+      }
+    }
+    
+    .data-table-pagination-info {
+      color: var(--text-secondary);
+    }
+    
+    .action-button {
+      &.import-button {
+        background-color: var(--background-color);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+        
+        &:hover {
+          background-color: var(--background-hover);
+        }
+      }
+    }
+  }
+}

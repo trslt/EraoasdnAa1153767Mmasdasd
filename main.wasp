@@ -1,0 +1,733 @@
+app OpenSaaS {
+  wasp: {
+    version: "^0.16.0"
+  },
+
+  title: "Youpiter",
+
+  head: [
+    "<meta charset='utf-8' />",
+    "<meta name='description' content='Your apps main description and features.' />",
+    "<meta name='author' content='Your (App) Name' />",
+    "<meta name='keywords' content='saas, solution, product, app, service' />",
+    
+    "<meta property='og:type' content='website' />",
+    "<meta property='og:title' content='Your Open SaaS App' />",
+    "<meta property='og:site_name' content='Your Open SaaS App' />",
+    "<meta property='og:url' content='https://your-saas-app.com' />",
+    "<meta property='og:description' content='Your apps main description and features.' />",
+    "<meta property='og:image' content='https://your-saas-app.com/public-banner.webp' />",
+    "<meta name='twitter:image' content='https://your-saas-app.com/public-banner.webp' />",
+    "<meta name='twitter:image:width' content='800' />",
+    "<meta name='twitter:image:height' content='400' />",
+    "<meta name='twitter:card' content='summary_large_image' />",
+    // TODO: You can put your Plausible analytics scripts below (https://docs.opensaas.sh/guides/analytics/):
+    // NOTE: Plausible does not use Cookies, so you can simply add the scripts here.
+    // Google, on the other hand, does, so you must instead add the script dynamically
+    // via the Cookie Consent component after the user clicks the "Accept" cookies button.
+    // "<script defer data-domain='<your-site-id>' src='https://plausible.io/js/script.js'></script>",  // for production
+    // "<script defer data-domain='<your-site-id>' src='https://plausible.io/js/script.local.js'></script>",  // for development
+    // Font utilizzate da Konsta UI KIT
+    "<link rel='preconnect' href='https://fonts.googleapis.com' />",
+    "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />",
+    "<link href='https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap' rel='stylesheet' />",
+    "<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover' />",
+    // Fine import per Konsta UI KIT
+  ],
+
+  // 🔐 Auth out of the box! https://wasp-lang.dev/docs/auth/overview
+  auth: {
+    userEntity: User,
+    methods: {
+      // NOTE: If you decide to not use email auth, make sure to also delete the related routes and pages below.
+      //   (RequestPasswordReset(Route|Page), PasswordReset(Route|Page), EmailVerification(Route|Page))
+      email: {
+        fromField: {
+          name: "Open SaaS App",
+          email: "me@example.com"
+        },
+        emailVerification: {
+          clientRoute: EmailVerificationRoute,
+          getEmailContentFn: import { getVerificationEmailContent } from "@src/auth/email-and-pass/emails",
+        },
+        passwordReset: {
+          clientRoute: PasswordResetRoute,
+          getEmailContentFn: import { getPasswordResetEmailContent } from "@src/auth/email-and-pass/emails",
+        },
+        userSignupFields: import { getEmailUserFields } from "@src/auth/userSignupFields",
+      },
+      // Uncomment to enable Google Auth (check https://wasp-lang.dev/docs/auth/social-auth/google for setup instructions):
+      // google: { // Guide for setting up Auth via Google
+      //   userSignupFields: import { getGoogleUserFields } from "@src/auth/userSignupFields",
+      //   configFn: import { getGoogleAuthConfig } from "@src/auth/userSignupFields",
+      // },
+      // Uncomment to enable GitHub Auth (check https://wasp-lang.dev/docs/auth/social-auth/github for setup instructions):
+      // gitHub: {
+      //   userSignupFields: import { getGitHubUserFields } from "@src/auth/userSignupFields",
+      //   configFn: import { getGitHubAuthConfig } from "@src/auth/userSignupFields",
+      // },
+      // Uncomment to enable Discord Auth (check https://wasp-lang.dev/docs/auth/social-auth/discord for setup instructions):
+      // discord: {
+      //   userSignupFields: import { getDiscordUserFields } from "@src/auth/userSignupFields",
+      //   configFn: import { getDiscordAuthConfig } from "@src/auth/userSignupFields"
+      // }
+    },
+    onAfterSignup: import { onAfterSignup } from "@src/auth/hooks",
+    onAuthFailedRedirectTo: "/app/auth/login", // /login, la rotta di default
+    onAuthSucceededRedirectTo: "/app",
+  },
+
+  db: {
+    // Run `wasp db seed` to seed the database with the seed functions below:
+    seeds: [
+      // Populates the database with a bunch of fake users to work with during development.
+      import { seedMockUsers } from "@src/server/scripts/dbSeeds",
+    ]
+  },
+
+  client: {
+    rootComponent: import App from "@src/client/App",
+  },
+
+  emailSender: {
+    // NOTE: "Dummy" provider is just for local development purposes.
+    //   Make sure to check the server logs for the email confirmation url (it will not be sent to an address)!
+    //   Once you are ready for production, switch to e.g. "SendGrid" or "Mailgun" providers. Check out https://docs.opensaas.sh/guides/email-sending/ .
+    provider: Dummy,
+    defaultFrom: {
+      name: "Open SaaS App",
+      // When using a real provider, e.g. SendGrid, you must use the same email address that you configured your account to send out emails with!
+      email: "me@example.com"
+    },
+  },
+}
+
+route LandingPageRoute { path: "/", to: LandingPage }
+page LandingPage {
+  component: import LandingPage from "@src/landing-page/LandingPage",
+  authRequired: false,
+}
+
+//#region Auth Pages
+route LoginRoute { path: "/login", to: LoginPage }
+page LoginPage {
+  component: import Login from "@src/auth/LoginPage"
+}
+
+route SignupRoute { path: "/signup", to: SignupPage }
+page SignupPage {
+  component: import { Signup } from "@src/auth/SignupPage"
+}
+
+route RequestPasswordResetRoute { path: "/request-password-reset", to: RequestPasswordResetPage }
+page RequestPasswordResetPage {
+  component: import { RequestPasswordResetPage } from "@src/auth/email-and-pass/RequestPasswordResetPage",
+}
+
+route PasswordResetRoute { path: "/password-reset", to: PasswordResetPage }
+page PasswordResetPage {
+  component: import { PasswordResetPage } from "@src/auth/email-and-pass/PasswordResetPage",
+}
+
+route EmailVerificationRoute { path: "/email-verification", to: EmailVerificationPage }
+page EmailVerificationPage {
+  component: import { EmailVerificationPage } from "@src/auth/email-and-pass/EmailVerificationPage",
+}
+//#endregion
+
+//#region User
+route AccountRoute { path: "/account", to: AccountPage }
+page AccountPage {
+  authRequired: true,
+  component: import Account from "@src/user/AccountPage"
+}
+
+query getPaginatedUsers {
+  fn: import { getPaginatedUsers } from "@src/user/operations",
+  entities: [User]
+}
+
+action updateCurrentUser {
+  fn: import { updateCurrentUser } from "@src/user/operations",
+  entities: [User]
+}
+
+action updateUserById {
+  fn: import { updateUserById } from "@src/user/operations",
+  entities: [User]
+}
+//#endregion
+
+//#region Demo AI App
+route DemoAppRoute { path: "/demo-app", to: DemoAppPage }
+page DemoAppPage {
+  authRequired: true,
+  component: import DemoAppPage from "@src/demo-ai-app/DemoAppPage"
+}
+
+action generateGptResponse {
+  fn: import { generateGptResponse } from "@src/demo-ai-app/operations",
+  entities: [User, Task, GptResponse]
+}
+
+action createTask {
+  fn: import { createTask } from "@src/demo-ai-app/operations",
+  entities: [Task]
+}
+
+action deleteTask {
+  fn: import { deleteTask } from "@src/demo-ai-app/operations",
+  entities: [Task]
+}
+
+action updateTask {
+  fn: import { updateTask } from "@src/demo-ai-app/operations",
+  entities: [Task]
+}
+
+query getGptResponses {
+  fn: import { getGptResponses } from "@src/demo-ai-app/operations",
+  entities: [User, GptResponse]
+}
+
+query getAllTasksByUser {
+  fn: import { getAllTasksByUser } from "@src/demo-ai-app/operations",
+  entities: [Task]
+}
+//#endregion
+
+//#region Payment
+route PricingPageRoute { path: "/pricing", to: PricingPage }
+page PricingPage {
+  component: import PricingPage from "@src/payment/PricingPage"
+}
+
+route CheckoutRoute { path: "/checkout", to: CheckoutPage }
+page CheckoutPage {
+  authRequired: true,
+  component: import Checkout from "@src/payment/CheckoutPage"
+}
+
+query getCustomerPortalUrl {
+  fn: import { getCustomerPortalUrl } from  "@src/payment/operations",
+  entities: [User]
+}
+
+action generateCheckoutSession {
+  fn: import { generateCheckoutSession } from "@src/payment/operations",
+  entities: [User]
+}
+
+api paymentsWebhook {
+  fn: import { paymentsWebhook } from "@src/payment/webhook",
+  entities: [User],
+  middlewareConfigFn: import { paymentsMiddlewareConfigFn } from "@src/payment/webhook",
+  httpRoute: (POST, "/payments-webhook")
+}
+//#endregion
+
+//#region File Upload
+route FileUploadRoute { path: "/file-upload", to: FileUploadPage }
+page FileUploadPage {
+  authRequired: true,
+  component: import FileUpload from "@src/file-upload/FileUploadPage"
+}
+
+action createFile {
+  fn: import { createFile } from "@src/file-upload/operations",
+  entities: [User, File]
+}
+
+query getAllFilesByUser {
+  fn: import { getAllFilesByUser } from "@src/file-upload/operations",
+  entities: [User, File]
+}
+
+query getDownloadFileSignedURL {
+  fn: import { getDownloadFileSignedURL } from "@src/file-upload/operations",
+  entities: [User, File]
+}
+//#endregion
+
+//#region Analytics
+query getDailyStats {
+  fn: import { getDailyStats } from "@src/analytics/operations",
+  entities: [User, DailyStats]
+}
+
+job dailyStatsJob {
+  executor: PgBoss,
+  perform: {
+    fn: import { calculateDailyStats } from "@src/analytics/stats"
+  },
+  schedule: {
+    cron: "0 * * * *" // every hour. useful in production
+    // cron: "* * * * *" // every minute. useful for debugging
+  },
+  entities: [User, DailyStats, Logs, PageViewSource]
+}
+//#endregion
+
+//#region Admin Dashboard
+route AdminRoute { path: "/default/admin", to: AnalyticsDashboardPage }
+page AnalyticsDashboardPage {
+  authRequired: true,
+  component: import AnalyticsDashboardPage from "@src/admin/dashboards/analytics/AnalyticsDashboardPage"
+}
+
+route AdminUsersRoute { path: "/default/admin/users", to: AdminUsersPage }
+page AdminUsersPage {
+  authRequired: true,
+  component: import AdminUsers from "@src/admin/dashboards/users/UsersDashboardPage"
+}
+
+route AdminSettingsRoute { path: "/default/admin/settings", to: AdminSettingsPage }
+page AdminSettingsPage {
+  authRequired: true,
+  component: import AdminSettings from "@src/admin/elements/settings/SettingsPage"
+}
+
+route AdminChartsRoute { path: "/default/admin/chart", to: AdminChartsPage }
+page AdminChartsPage {
+  authRequired: true,
+  component: import AdminCharts from "@src/admin/elements/charts/ChartsPage"
+}
+
+route AdminFormElementsRoute { path: "/default/admin/forms/form-elements", to: AdminFormElementsPage }
+page AdminFormElementsPage {
+  authRequired: true,
+  component: import AdminForms from "@src/admin/elements/forms/FormElementsPage"
+}
+
+route AdminFormLayoutsRoute { path: "/default/admin/forms/form-layouts", to: AdminFormLayoutsPage }
+page AdminFormLayoutsPage {
+  authRequired: true,
+  component: import AdminForms from "@src/admin/elements/forms/FormLayoutsPage"
+}
+
+route AdminCalendarRoute { path: "/default/admin/calendar", to: AdminCalendarPage }
+page AdminCalendarPage {
+  authRequired: true,
+  component: import AdminCalendar from "@src/admin/elements/calendar/CalendarPage"
+}
+
+route AdminUIAlertsRoute { path: "/default/admin/ui/alerts", to: AdminUIAlertsPage }
+page AdminUIAlertsPage {
+  authRequired: true,
+  component: import AdminUI from "@src/admin/elements/ui-elements/AlertsPage"
+}
+
+route AdminUIButtonsRoute { path: "/default/admin/ui/buttons", to: AdminUIButtonsPage }
+page AdminUIButtonsPage {
+  authRequired: true,
+  component: import AdminUI from "@src/admin/elements/ui-elements/ButtonsPage"
+}
+
+route NotFoundRoute { path: "*", to: NotFoundPage }
+page NotFoundPage {
+  component: import { NotFoundPage } from "@src/client/components/NotFoundPage"
+}
+//#endregion
+
+//#region Contact Form Messages
+// TODO: 
+// add functionality to allow users to send messages to admin
+// and make them accessible via the admin dashboard
+route AdminMessagesRoute { path: "/default/admin/messages", to: AdminMessagesPage }
+page AdminMessagesPage {
+  authRequired: true,
+  component: import AdminMessages from "@src/messages/MessagesPage"
+}
+//#endregion
+
+//#region Newsletter
+job sendNewsletter {
+  executor: PgBoss,
+  perform: {
+    fn: import { checkAndQueueNewsletterEmails } from "@src/newsletter/sendNewsletter"
+  },
+  schedule: {
+    cron: "0 7 * * 1" // at 7:00 am every Monday
+  },
+  entities: [User]
+}
+//#endregion
+
+//#region Courses App
+
+//#routes
+route AdminDashboardRoute { path: "/admin", to: AdminDashboardPage }
+page AdminDashboardPage {
+  authRequired: true,
+  component: import DashboardPage from "@src/courses-app/pages/admin/DashboardPage"
+}
+
+route CreateCourseRoute { path: "/admin/course", to: CreateCoursePage }
+page CreateCoursePage {
+  authRequired: true,
+  component: import CreateCoursePage from "@src/courses-app/pages/admin/CreateCoursePage"
+}
+
+route AdminListCoursesRoute { path: "/admin/courses", to: AdminListCoursesPage }
+page AdminListCoursesPage {
+  authRequired: true,
+  component: import ListCoursesPage from "@src/courses-app/pages/admin/ListCoursesPage"
+}
+
+route ViewCourseRoute { path: "/admin/course/:courseId", to: ViewCoursePage }
+page ViewCoursePage {
+  authRequired: true,
+  component: import ViewCoursePage from "@src/courses-app/pages/admin/ViewCoursePage"
+}
+
+route EditCourseRoute { path: "/admin/course/:courseId/edit", to: EditCoursePage }
+page EditCoursePage {
+  authRequired: true,
+  component: import EditCoursePage from "@src/courses-app/pages/admin/EditCoursePage"
+}
+
+route EditChaptersRoute { path: "/admin/course/:courseId/chapters/edit", to: EditChaptersPage }
+page EditChaptersPage {
+  authRequired: true,
+  component: import EditChaptersPage from "@src/courses-app/pages/admin/EditChaptersPage"
+}
+
+route EditLessonRoute { path: "/lesson/:lessonId/edit", to: EditLessonPage }
+page EditLessonPage {
+  authRequired: true,
+  component: import EditLessonPage from "@src/courses-app/pages/admin/EditLessonPage"
+}
+// Rotte per l'applicazione
+route HomePageRoute { path: "/app", to: HomePagePage }
+page HomePagePage {
+  authRequired: true,
+  component: import HomePagePage from "@src/courses-app/pages/app/HomePagePage"
+}
+
+/* Course START */
+route ChapterPageRoute { path: "/app/course/:courseId/chapter/:chapterId", to: ChapterPage }
+page ChapterPage {
+  authRequired: true,
+  component: import ChapterPage from "@src/courses-app/pages/app/course/ChapterPage"
+}
+
+route CoursePageRoute { path: "/app/course/:courseId", to: CoursePage }
+page CoursePage {
+  authRequired: true,
+  component: import AppCoursePage from "@src/courses-app/pages/app/course/CoursePage"
+}
+
+route CourseNotFoundPageRoute { path: "/app/not-found/course", to: CourseNotFoundPage }
+page CourseNotFoundPage {
+  authRequired: true,
+  component: import CourseNotFoundPage from "@src/courses-app/pages/app/400s/CourseNotFoundPage"
+}
+
+route InstructorPageRoute { path: "/app/instructor/:instructorId", to: InstructorPage }
+page InstructorPage {
+  authRequired: true,
+  component: import InstructorPage from "@src/courses-app/pages/app/course/InstructorPage"
+}
+
+route LessonPageRoute { path: "/app/course/lesson/:lessonId", to: LessonPage }
+page LessonPage {
+  authRequired: true,
+  component: import LessonPage from "@src/courses-app/pages/app/course/LessonPage"
+}
+
+route LessonPlayerRoute { path: "/app/play/:courseId/:lessonId", to: LessonPlayer }
+page LessonPlayer {
+  authRequired: true,
+  component: import LessonPlayer from "@src/courses-app/pages/app/course/LessonPlayer"
+}
+
+route ReviewCourseRoute { path: "/app/course/:courseId/review", to: ReviewCourse }
+page ReviewCourse {
+  authRequired: true,
+  component: import ReviewCourse from "@src/courses-app/pages/app/course/ReviewCourse"
+}
+/* Course END */
+
+/* Auth START */
+route AppAskPasswordResetPageRoute { path: "/app/auth/ask-password-reset", to: AppAskPasswordResetPage }
+page AppAskPasswordResetPage {
+  component: import AppAskPasswordResetPage from "@src/courses-app/pages/auth/AppAskPasswordResetPage"
+}
+
+route AppEmailVerificationPageRoute { path: "/app/auth/email-verification", to: AppEmailVerificationPage }
+page AppEmailVerificationPage {
+  component: import AppEmailVerificationPage from "@src/courses-app/pages/auth/AppEmailVerificationPage"
+}
+
+route AppLoginPageRoute { path: "/app/auth/login", to: AppLoginPage }
+page AppLoginPage {
+  component: import AppLoginPage from "@src/courses-app/pages/auth/AppLoginPage"
+}
+
+route AppPasswordResetPageRoute { path: "/app/auth/password-reset", to: AppPasswordResetPage }
+page AppPasswordResetPage {
+  component: import AppPasswordResetPage from "@src/courses-app/pages/auth/AppPasswordResetPage"
+}
+
+route AppSignupPageRoute { path: "/app/auth/signup", to: AppSignupPage }
+page AppSignupPage {
+  component: import AppSignupPage from "@src/courses-app/pages/auth/AppSignupPage"
+}
+/* Auth END */
+
+/* User Me START */
+route MySettingsPageRoute { path: "/app/me/settings", to: MySettingsPage }
+page MySettingsPage {
+  authRequired: true,
+  component: import MySettingsPage from "@src/courses-app/pages/app/user/MySettingsPage"
+}
+
+route MyCertificatesPageRoute { path: "/app/me/certificates", to: MyCertificatesPage }
+page MyCertificatesPage {
+  authRequired: true,
+  component: import MyCertificatesPage from "@src/courses-app/pages/app/user/MyCertificatesPage"
+}
+
+route MyCoursesPageRoute { path: "/app/me/courses", to: MyCoursesPage }
+page MyCoursesPage {
+  authRequired: true,
+  component: import MyCoursesPage from "@src/courses-app/pages/app/user/MyCoursesPage"
+}
+
+route MyProfilePageRoute { path: "/app/me", to: MyProfilePage }
+page MyProfilePage {
+  authRequired: true,
+  component: import MyProfilePage from "@src/courses-app/pages/app/user/MyProfilePage"
+}
+/* User Me END */
+
+/* Landings START */
+route AllCoursesPageRoute { path: "/app/courses", to: AllCoursesPage }
+page AllCoursesPage {
+  authRequired: true,
+  component: import AllCoursesPage from "@src/courses-app/pages/app/AllCoursesPage"
+}
+
+route SearchCoursePageRoute { path: "/app/search", to: SearchCoursePage }
+page SearchCoursePage {
+  authRequired: true,
+  component: import SearchCoursePage from "@src/courses-app/pages/app/SearchCoursePage"
+}
+/* Landings END */
+
+//#queries 
+query getCourse {
+  fn: import { getCourse } from "@src/courses-app/operations/CourseOperations",
+  entities: [Course]
+}
+
+query getCourses {
+  fn: import { getCourses } from "@src/courses-app/operations/CourseOperations",
+  entities: [Course]
+}
+
+query getCourseCategories {
+  fn: import { getCourseCategories } from "@src/courses-app/operations/CourseOperations",
+  entities: [CourseCategory]
+}
+
+query getCourseChapters {
+  fn: import { getCourseChapters } from "@src/courses-app/operations/CourseOperations",
+  entities: [CourseChapter]
+}
+
+query getUserInstructors {
+  fn: import { getUserInstructors } from "@src/courses-app/operations/UserOperations",
+  entities: [UserInstructor]
+}
+
+query getLesson {
+  fn: import { getLesson } from "@src/courses-app/operations/LessonOperations",
+  entities: [Lesson]
+}
+
+query getLessonContents {
+  fn: import { getLessonContents } from "@src/courses-app/operations/LessonOperations",
+  entities: [LessonContent]
+}
+
+query getLessonsByChapterIDs {
+  fn: import { getLessonsByChapterIDs } from "@src/courses-app/operations/LessonOperations",
+  entities: [LessonsInChapters]
+}
+
+//#action
+
+//#apis Middleware per CORS
+apiNamespace coursesAppNamespaceMiddlewareFn {
+  middlewareConfigFn: import { coursesAppNamespaceMiddlewareFn } from "@src/courses-app/api/GeneralApi.ts",
+  path: "/api"
+}
+
+api CreateCourse { 
+  fn: import { createCourse } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (POST, "/api/admin/course"),
+  auth: true,
+  entities: [Course]
+}
+
+api CreateCourseChapter { 
+  fn: import { createCourseChapter } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (PUT, "/api/admin/course/:courseId/chapter"),
+  auth: true,
+  entities: [CourseChapter]
+}
+
+api CreateLesson { 
+  fn: import { createLesson } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (POST, "/api/admin/lesson"),
+  auth: true,
+  entities: [Lesson, LessonsInChapters, LessonContent]
+}
+
+api UpdateLessonContent {
+  fn: import { updateLessonContent } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (PUT, "/api/admin/lesson/:lessonId/content"),
+  auth: true,
+  entities: [LessonContent]
+}
+
+api UpdateCourseCategories { 
+  fn: import { updateCourseCategories } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (PUT, "/api/admin/course/:courseId/categories"),
+  auth: true,
+  entities: [Course, CourseCategory]
+}
+
+api UpdateCourseInstructors { 
+  fn: import { updateCourseInstructors } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (PUT, "/api/admin/course/:courseId/instructors"),
+  auth: true,
+  entities: [Course, UserInstructor]
+}
+
+api UpdateCourse { 
+  fn: import { updateCourse } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (PUT, "/api/admin/course/:courseId"),
+  auth: true,
+  entities: [Course, CourseCategory]
+}
+
+api GetUploadPresignedURL { 
+  fn: import { getUploadPresignedURL } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (POST, "/api/admin/permission/upload"),
+  auth: true,
+  entities: [Course]
+}
+
+api UpdateCourseCover { 
+  fn: import { updateCourseCover } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (PUT, "/api/admin/course/:courseId/cover"),
+  auth: true,
+  entities: [Course]
+}
+
+api CourseEnrollment { 
+  fn: import { courseEnrollment } from "@src/courses-app/api/CourseApi",
+  httpRoute: (POST, "/api/course/:courseId/enroll"),
+  auth: true,
+  entities: [Course, CourseEnrollment, StudentProgress]
+}
+
+// QUIZ
+api CreateQuiz { 
+  fn: import { createQuiz } from "@src/courses-app/api/QuizApi",
+  httpRoute: (POST, "/api/admin/quiz"),
+  auth: true,
+  entities: [Quiz, QuizTranslation]
+}
+
+api UpdateQuiz { 
+  fn: import { updateQuiz } from "@src/courses-app/api/QuizApi.ts",
+  httpRoute: (PUT, "/api/admin/quiz/:quizId"),
+  auth: true,
+  entities: [Quiz, QuizTranslation]
+}
+
+api DeleteQuiz { 
+  fn: import { deleteQuiz } from "@src/courses-app/api/QuizApi.ts",
+  httpRoute: (DELETE, "/api/admin/quiz/:quizId"),
+  auth: true,
+  entities: [Quiz]
+}
+
+api AssociateLessonQuiz { 
+  fn: import { associateLessonQuiz } from "@src/courses-app/api/QuizApi",
+  httpRoute: (POST, "/api/admin/lesson/:lessonId/quiz"),
+  auth: true,
+  entities: [Lesson, Quiz, LessonQuiz]
+}
+
+api AddQuestionToQuiz { 
+  fn: import { addQuestionToQuiz } from "@src/courses-app/api/QuizApi",
+  httpRoute: (POST, "/api/admin/quiz/:quizId/questions"),
+  auth: true,
+  entities: [Quiz, Question, QuizQuestion]
+}
+
+api RemoveQuestionFromQuiz { 
+  fn: import { removeQuestionFromQuiz } from "@src/courses-app/api/QuizApi",
+  httpRoute: (DELETE, "/api/admin/quiz/:quizId/questions/:questionId"),
+  auth: true,
+  entities: [Quiz, Question, QuizQuestion]
+}
+
+query getQuizzes {
+  fn: import { getQuizzes } from "@src/courses-app/operations/QuizOperations",
+  entities: [Quiz, QuizTranslation]
+}
+
+query getQuiz {
+  fn: import { getQuiz } from "@src/courses-app/operations/QuizOperations",
+  entities: [Quiz, QuizTranslation, QuizQuestion, Question]
+}
+
+query getUserQuizAttempts {
+  fn: import { getUserQuizAttempts } from "@src/courses-app/operations/QuizOperations",
+  entities: [UserQuizAttempt, Quiz, QuizQuestion, Question, Option]
+}
+
+query getLessonQuizzes {
+  fn: import { getLessonQuizzes } from "@src/courses-app/operations/QuizOperations",
+  entities: [Lesson, Quiz, LessonQuiz]
+}
+
+// Question
+api CreateQuestion { 
+  fn: import { createQuestion } from "@src/courses-app/api/QuestionApi",
+  httpRoute: (POST, "/api/admin/question"),
+  auth: true,
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+
+api UpdateQuestion { 
+  fn: import { updateQuestion } from "@src/courses-app/api/QuestionApi.ts",
+  httpRoute: (PUT, "/api/admin/question/:questionId"),
+  auth: true,
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+
+api DeleteQuestion { 
+  fn: import { deleteQuestion } from "@src/courses-app/api/QuestionApi.ts",
+  httpRoute: (DELETE, "/api/admin/question/:questionId"),
+  auth: true,
+  entities: [Question]
+}
+
+query getQuestion {
+  fn: import { getQuestion } from "@src/courses-app/operations/QuestionOperations",
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+
+query getQuestionsBySkill {
+  fn: import { getQuestionsBySkill } from "@src/courses-app/operations/QuestionOperations",
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+
+
+//#endregion
