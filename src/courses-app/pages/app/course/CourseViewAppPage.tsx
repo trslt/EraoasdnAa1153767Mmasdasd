@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Course } from 'wasp/entities';
 import {
   useQuery,
-  getCourse,
+  courseGet,
   getCourseChapters,
   getLessonsByChapterIDs,
 } from 'wasp/client/operations';
@@ -122,7 +122,7 @@ export default function CourseViewAppPage() {
     data: courseInfo,
     isLoading: isLoadingCourseInfo,
     error: courseInfoError
-  } = useQuery(getCourse, { courseId: params.courseId! });
+  } = useQuery(courseGet, { courseId: params.courseId! });
 
   useEffect(() => {
     // Se il corso non viene trovato

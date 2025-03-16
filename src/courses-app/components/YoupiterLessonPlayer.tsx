@@ -1,5 +1,5 @@
 import NotionLikeEditor from "../editor/NotionLikeEditor";
-import { useQuery, getLessonContents } from 'wasp/client/operations';
+import { useQuery, lessonContentGet } from 'wasp/client/operations';
 import { JSONContent } from '@tiptap/react';
 import { useEffect, useState } from "react";
 
@@ -18,7 +18,7 @@ export default function YoupiterLessonPlayer({
         isLoading: isLoadingLessonContent,
         error: isErrorLessonContent,
         refetch: refetchLessonContent
-    } = useQuery(getLessonContents, { lessonId, lang });
+    } = useQuery(lessonContentGet, { lessonId, lang });
 
     const [currentLessonContent, setCurrentLessonContent] = useState<JSONContent>();
 

@@ -1,7 +1,7 @@
 import { type AuthUser } from 'wasp/auth';
 import {
   useQuery,
-  getCourse
+  courseGet
 } from 'wasp/client/operations';
 import { type Course } from 'wasp/entities';
 import { useParams } from 'react-router';
@@ -29,7 +29,7 @@ export default function CourseViewAdminPage({ user }: { user: AuthUser }) {
     data: courseInfo,
     isLoading: isLoadingCourseInfo,
     error: courseInfoError
-  } = useQuery(getCourse, { courseId: params.courseId! })
+  } = useQuery(courseGet, { courseId: params.courseId! })
 
   useEffect(() => {
 

@@ -6,14 +6,14 @@ import {
   Navbar,
   Button,
 } from 'konsta/react';
-import { getCourses, useQuery } from 'wasp/client/operations';
+import { courseList, useQuery } from 'wasp/client/operations';
 import { Course } from 'wasp/entities';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CourseListAppPage() {
 
-  const { data: coursesData, isLoading, error } = useQuery(getCourses);
+  const { data: coursesData, isLoading, error } = useQuery(courseList);
 
   const [courses, setCourses] = useState<Course[]>([]);
 

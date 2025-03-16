@@ -140,7 +140,7 @@ model Course {
   image            String              @default("standard-image.png")
 
   categories       CourseCategory[]
-  chapters         CourseChapter[]
+  chapters         Chapter[]
   lessons          LessonsInChapters[]
   lessonsInCourses LessonsInCourses[]
   instructors      CourseInstructor[]
@@ -197,7 +197,7 @@ model Lesson {
 }
 
 // Tabella ponte che contiene i capitoli dei corsi
-model CourseChapter {
+model Chapter {
   id       String               @id @default(uuid())
   title    String
   position Int                  @default(0) // Nuovo campo per l'ordine dei capitoli
@@ -213,7 +213,7 @@ model LessonsInChapters {
   id              String            @id @default(uuid())
   lesson          Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId        String
-  chapter         CourseChapter     @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  chapter         Chapter           @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   chapterId       String
   course          Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId        String

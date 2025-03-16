@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 import {
-    type GetQuiz,
-    type GetLessonQuizzes,
-    type GetQuizzes,
-    type GetUserQuizAttempts,
+    QuizGet,
+    GetLessonQuizzes,
+    QuizList,
+    GetUserQuizAttempts,
 } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
 
@@ -16,14 +16,14 @@ import { HttpError } from 'wasp/server';
  * @param isActive Filtra i quiz attivi o inattivi
  */
 
-type GetQuizzesBody = {
+type QuizListBody = {
     page?: number;
     limit?: number;
     search?: string;
     isActive?: boolean;
 }
 
-export const getQuizzes: GetQuizzes<GetQuizzesBody, any> = async (args, context) => {
+export const quizList: QuizList<QuizListBody, any> = async (args, context) => {
 
     // Verifica che l'utente sia autenticato e sia admin
     if (!context.user) {
@@ -97,7 +97,8 @@ export const getQuizzes: GetQuizzes<GetQuizzesBody, any> = async (args, context)
  * @param quizId ID del quiz da recuperare
  */
 
-export const getQuiz: GetQuiz<{ quizId: string }, any> = async (args, context) => {
+export const quizGet: QuizGet<{ quizId: string }, any> = async (args, context) => {
+    
     // Verifica che l'utente sia autenticato
     if (!context.user) {
         throw new HttpError(401, 'Non autorizzato');

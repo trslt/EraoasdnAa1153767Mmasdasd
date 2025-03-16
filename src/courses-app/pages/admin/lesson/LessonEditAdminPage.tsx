@@ -2,7 +2,7 @@ import { type AuthUser } from 'wasp/auth';
 import NotionLikeEditor from "../../../editor/NotionLikeEditor"
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router';
-import { useQuery, getLesson, getLessonContents } from 'wasp/client/operations';
+import { useQuery, lessonGet, lessonContentGet } from 'wasp/client/operations';
 import { JSONContent } from '@tiptap/react';
 import { useEffect, useState } from "react";
 import YoupiterBreadcrumb from '../../../components/YoupiterBreadcrumb';
@@ -32,9 +32,9 @@ export default function LessonEditAdminPage({ user }: { user: AuthUser }) {
     return null;
   }
 
-  const { data: lesson } = useQuery(getLesson, { lessonId });
+  const { data: lesson } = useQuery(lessonGet, { lessonId });
 
-  const { data: lessonContent, isLoading } = useQuery(getLessonContents, { lessonId, lang: 'en' });
+  const { data: lessonContent, isLoading } = useQuery(lessonContentGet, { lessonId, lang: 'en' });
 
   const [localLessonContent, setLocalLessonContent] = useState<JSONContent>();
 

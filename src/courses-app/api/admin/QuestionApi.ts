@@ -1,9 +1,9 @@
 'use server';
 
 import {
-    CreateQuestion,
-    UpdateQuestion,
-    DeleteQuestion
+    QuestionCreate,
+    QuestionUpdate,
+    QuestionDelete,
 } from "wasp/server/api";
 import {
     Question,
@@ -14,15 +14,21 @@ import {
 } from 'wasp/entities';
 import { HttpError } from "wasp/server";
 import { PrismaClient } from '@prisma/client';
-import { isAdmin } from '../services/UserServices';
+import { isAdmin } from '../../services/UserServices';
 
 const prisma = new PrismaClient();
 
 /**
  * API Crea Domanda
+ * 
+ * @param type string  Tipo della domanda
+ * @param weight number  Peso della domanda
+ * @param translations array  Traduzioni della domanda
+ * @param options array  Opzioni della domanda
+ * @param skills array  Skill associate alla domanda
  */
 
-interface CreateQuestionBody {
+interface QuestionCreateParams {
     type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE',
     weight: number,
     translations: { language: string, text: string, explanation?: string }[],
@@ -34,11 +40,11 @@ interface CreateQuestionBody {
     skills?: { skillId: string, level: number }[]
 }
 
-export const createQuestion: CreateQuestion<{}, Question> = async (req, res, context) => {
+export const questionCreate: QuestionCreate<{}, Question> = async (req, res, context) => {
 
     if (!isAdmin(context.user)) throw new HttpError(403);
 
-    const { type, weight, translations, options, skills } = req.body as CreateQuestionBody;
+    const { type, weight, translations, options, skills } = req.body as QuestionCreateParams;
 
     try {
         return prisma.$transaction(async (tx) => {
@@ -130,26 +136,32 @@ export const createQuestion: CreateQuestion<{}, Question> = async (req, res, con
 
 /**
  * API Aggiorna Domanda
+ * 
+ * @param type string  Tipo della domanda
+ * @param weight number  Peso della domanda
+ * @param translations array  Traduzioni della domanda
+ * @param options array  Opzioni della domanda
+ * @param skills array  Skill associate alla domanda
  */
 
-interface UpdateQuestionBody {
-    type: string;
+interface QuestionUpdateBody {
+    type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE';
     weight: number;
     translations: any,
-    options: Option,
-    skills: QuestionSkill
+    options: [],
+    skills: []
 }
 
-interface UpdateQuestionParams {
+interface QuestionUpdateParams {
     questionId: string
 }
 
-export const updateQuestion: UpdateQuestion<{}, Question> = async (req, res, context) => {
+export const questionUpdate: QuestionUpdate<{}, Question> = async (req, res, context) => {
 
     if (!isAdmin(context.user)) throw new HttpError(403);
 
-    const { questionId } = req.params as UpdateQuestionParams;
-    const { type, weight, translations, options, skills } = req.body;
+    const { questionId } = req.params as QuestionUpdateParams;
+    const { type, weight, translations, options, skills } = req.body as QuestionUpdateBody;
 
     try {
         return prisma.$transaction(async (tx) => {
@@ -260,17 +272,19 @@ export const updateQuestion: UpdateQuestion<{}, Question> = async (req, res, con
 
 /**
  * API Elimina Domanda
+ * 
+ * @param questionId string  ID della domanda
  */
 
-interface DeleteQuestionParams {
+interface QuestionDeleteParams {
     questionId: string
 }
 
-export const deleteQuestion: DeleteQuestion<{}, {}> = async (req, res, context) => {
+export const questionDelete: QuestionDelete<{}, {}> = async (req, res, context) => {
 
     if (!isAdmin(context.user)) throw new HttpError(403);
 
-    const { questionId } = req.params as DeleteQuestionParams;
+    const { questionId } = req.params as QuestionDeleteParams;
 
     try {
         await prisma.question.delete({

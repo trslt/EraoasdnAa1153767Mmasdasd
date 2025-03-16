@@ -2,7 +2,7 @@ import { type AuthUser } from 'wasp/auth';
 import {
   useQuery,
   getCourseChapters,
-  getCourse,
+  courseGet,
   getLessonsByChapterIDs
 } from 'wasp/client/operations';
 import { type Course } from 'wasp/entities';
@@ -95,7 +95,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
 
   const {
     data: courseInfo,
-  } = useQuery(getCourse, { courseId: params.courseId })
+  } = useQuery(courseGet, { courseId: params.courseId })
 
   useEffect(() => {
 

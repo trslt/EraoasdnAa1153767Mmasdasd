@@ -1,6 +1,6 @@
 import {
-    GetCourse,
-    GetCourses,
+    CourseGet,
+    CourseList,
     GetCourseCategories,
     GetCourseChapters,
     GetChapterNextLesson,
@@ -8,18 +8,21 @@ import {
 import { 
     Course,
     CourseCategory,
-    CourseChapter,
+    Chapter,
     LessonsInChapters,
 } from 'wasp/entities';
 import { HttpError } from 'wasp/server';
-
 
 /** 
  * Get Course by ID - includes categories and instructors
  * 
  * @param args.courseId - Course ID
  */
-export const getCourse: GetCourse<{ courseId: string }, Course | null> = async (args, context) => {
+
+type CourseGetArgs = { courseId: string };
+type CourseGetResult = Course | null;
+
+export const courseGet: CourseGet<CourseGetArgs, CourseGetResult> = async (args, context) => {
 
     return context.entities.Course.findUnique({
       where: {
@@ -47,8 +50,10 @@ export const getCourse: GetCourse<{ courseId: string }, Course | null> = async (
 
 /**
  * Get all courses
-*/
-export const getCourses: GetCourses<void, Course[]> = async (args, context) => {
+ * 
+ * // TODO: Add pagination, filtering, and sorting
+ */
+export const courseList: CourseList<void, Course[]> = async (args, context) => {
   return context.entities.Course.findMany({
     orderBy: { id: 'desc' },
   })
@@ -62,9 +67,9 @@ export const getCourseCategories: GetCourseCategories<void, CourseCategory[]> = 
 }
 
 /* Tutti i capitoli di un corso */
-export const getCourseChapters: GetCourseChapters<{ courseId: string }, CourseChapter[]> = async (args, context) => {
+export const getCourseChapters: GetCourseChapters<{ courseId: string }, Chapter[]> = async (args, context) => {
 
-  return context.entities.CourseChapter.findMany({
+  return context.entities.Chapter.findMany({
     where: {
       courseId: args.courseId
     },
@@ -95,7 +100,7 @@ export const getChapterNextLesson: GetChapterNextLesson<
   }
   
   // Trova il capitolo e le sue lezioni ordinate per posizione
-  const chapter = await context.entities.CourseChapter.findUnique({
+  const chapter = await context.entities.Chapter.findUnique({
     where: {
       id: args.chapterId
     },

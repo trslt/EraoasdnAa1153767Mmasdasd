@@ -8,9 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router';
 import {
   useQuery,
-  getLesson,
-  getLessonContents,
-  getChapterNextLesson,
+  lessonGet,
+  lessonContentGet,
 } from 'wasp/client/operations';
 import { useEffect, useState } from "react";
 import { JSONContent } from '@tiptap/react';
@@ -35,10 +34,10 @@ export default function LessonPlayAppPage() {
 
   console.log("lessonId", lessonId, "courseId", courseId)
 
-  const { data: lesson } = useQuery(getLesson, { lessonId });
+  const { data: lesson } = useQuery(lessonGet, { lessonId });
 
   // Ottieni il contenuto della lezione
-  const { data: lessonContent, isLoading } = useQuery(getLessonContents, { lessonId, lang: 'en' });
+  const { data: lessonContent, isLoading } = useQuery(lessonContentGet, { lessonId, lang: 'en' });
 
   const [localLessonContent, setLocalLessonContent] = useState<JSONContent>();
 
