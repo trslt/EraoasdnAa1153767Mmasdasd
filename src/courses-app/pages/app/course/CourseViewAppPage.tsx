@@ -5,15 +5,14 @@ import { useState, useEffect } from "react";
 import { Course } from 'wasp/entities';
 import {
   useQuery,
-  courseGet,
-  getCourseChapters,
+  getCourse,
+  courseChapterList,
   getLessonsByChapterIDs,
 } from 'wasp/client/operations';
 import {
   useRedirect404IfMissingParams,
 } from '../../../services/ClientServices';
 import { courseEnrollment } from '../../../services/client/CourseServices';
-import { en } from '@faker-js/faker';
 
 // Componente Header del Corso
 const CourseHeader = ({
@@ -122,7 +121,7 @@ export default function CourseViewAppPage() {
     data: courseInfo,
     isLoading: isLoadingCourseInfo,
     error: courseInfoError
-  } = useQuery(courseGet, { courseId: params.courseId! });
+  } = useQuery(getCourse, { courseId: params.courseId! });
 
   useEffect(() => {
     // Se il corso non viene trovato
@@ -131,7 +130,7 @@ export default function CourseViewAppPage() {
     }
 
     if (courseInfo != null) {
-      setCourse(courseInfo);
+      setCourse(courseInfo as Course);
     }
   }, [courseInfo]);
 
@@ -144,7 +143,7 @@ export default function CourseViewAppPage() {
     data: chapters,
     isLoading: isLoadingChapters,
     refetch: refetchChapters
-  } = useQuery(getCourseChapters,
+  } = useQuery(courseChapterList,
     {
       courseId: course?.id!
     },

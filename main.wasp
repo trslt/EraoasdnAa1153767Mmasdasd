@@ -518,58 +518,49 @@ page LessonPlayAppPage {
 // APP ROUTES END
 // <<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// ==========================
-// COURSE CATEGORIES - OPERATIONS
-// ==========================
-query getCourseCategories {
-  fn: import { getCourseCategories } from "@src/courses-app/operations/shared/CourseOperations",
-  entities: [CourseCategory]
-}
 
 // ==========================
 // CHAPTER - OPERATIONS
 // ==========================
-query getCourseChapters {
-  fn: import { getCourseChapters } from "@src/courses-app/operations/shared/CourseOperations",
-  entities: [Chapter]
-}
 
-query getUserInstructors {
-  fn: import { getUserInstructors } from "@src/courses-app/operations/UserOperations",
-  entities: [UserInstructor]
-}
-
-query getChapterNextLesson {
-  fn: import { getChapterNextLesson } from "@src/courses-app/operations/shared/CourseOperations",
-  entities: [Chapter, Lesson, CourseEnrollment, StudentProgress]
-}
 
 query getLessonsByChapterIDs {
   fn: import { getLessonsByChapterIDs } from "@src/courses-app/operations/shared/LessonOperations",
   entities: [LessonsInChapters]
 }
 
-//#action
-
 //#apis Middleware per CORS
 apiNamespace coursesAppNamespaceMiddlewareFn {
   middlewareConfigFn: import { coursesAppNamespaceMiddlewareFn } from "@src/courses-app/api/GeneralApi.ts",
   path: "/api"
 }
+
 // ==========================
 // COURSE - API & OPERATIONS
 // ==========================
 
 // ======= Dettaglio Corso
-query courseGet {
-  fn: import { courseGet } from "@src/courses-app/operations/shared/CourseOperations",
+query getCourse {
+  fn: import { getCourse } from "@src/courses-app/operations/shared/CourseOperations",
   entities: [Course]
 }
 
 // ======= Lista Corsi
-query courseList {
+query getCourseList {
   fn: import { courseList } from "@src/courses-app/operations/shared/CourseOperations",
   entities: [Course]
+}
+
+// ======= Lista Categoria dei Corsi
+query courseCategoryList {
+  fn: import { courseCategoryList } from "@src/courses-app/operations/shared/CourseCategoryOperations",
+  entities: [CourseCategory]
+}
+
+// ======= Lista Capitoli per Corso
+query courseChapterList {
+  fn: import { courseChapterList } from "@src/courses-app/operations/shared/ChapterOperations",
+  entities: [Chapter]
 }
 
 // ======= /api/admin/course ======= Creazione corso
@@ -612,6 +603,10 @@ api CourseInstructorUpdate {
   entities: [Course, UserInstructor]
 }
 
+// ==========================
+// LESSON - API & OPERATIONS
+// ==========================
+
 // ======= Dettaglio Lezione
 query lessonGet {
   fn: import { lessonGet } from "@src/courses-app/operations/shared/LessonOperations",
@@ -624,6 +619,12 @@ query lessonContentGet {
   entities: [LessonContent]
 }
 
+// ======= Ottieni lezione successiva del capitolo
+query chapterNextLessonGet {
+  fn: import { chapterNextLessonGet } from "@src/courses-app/operations/shared/ChapterOperations",
+  entities: [Chapter, Lesson, CourseEnrollment, StudentProgress]
+}
+
 // ======= /api/admin/lesson ======= Creazione lezione
 api LessonCreate { 
   fn: import { lessonCreate } from "@src/courses-app/api/admin/LessonApi",
@@ -631,6 +632,10 @@ api LessonCreate {
   auth: true,
   entities: [Lesson, LessonsInChapters, LessonContent]
 }
+
+// ==========================
+// Chapter - API & OPERATIONS
+// ========================== 
 
 // ======= /api/admin/course/:courseId/chapter ======= Creazione capitolo
 api ChapterCreate { 
@@ -684,6 +689,18 @@ api LessonContentUpdate {
   entities: [LessonContent]
 }
 
+// ======= Dettaglio Domanda
+query questionGet {
+  fn: import { questionGet } from "@src/courses-app/operations/shared/QuestionOperations",
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+
+// ======= Lista Domande per Skill
+query questionListBySkill {
+  fn: import { questionListBySkill } from "@src/courses-app/operations/admin/QuestionOperations",
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+
 // ======= /api/admin/question ======= Creazione domanda
 api QuestionCreate { 
   fn: import { questionCreate } from "@src/courses-app/api/admin/QuestionApi",
@@ -707,6 +724,13 @@ api QuestionDelete {
   auth: true,
   entities: [Question]
 }
+
+// ======= Lista Istruttori
+query instructorList {
+  fn: import { instructorList } from "@src/courses-app/operations/admin/InstructorOperations",
+  entities: [UserInstructor]
+}
+
 
 api GetUploadPresignedURL { 
   fn: import { getUploadPresignedURL } from "@src/courses-app/api/AdminApi.ts",
@@ -760,19 +784,4 @@ query getLessonQuizzes {
 // ==========================
 
 
-// ==========================
-// QUESTION - API
-// ==========================
 
-// ==========================
-// QUESTION - OPERATIONS
-// ==========================
-query getQuestion {
-  fn: import { getQuestion } from "@src/courses-app/operations/QuestionOperations",
-  entities: [Question, QuestionTranslation, Option, OptionTranslation]
-}
-
-query getQuestionsBySkill {
-  fn: import { getQuestionsBySkill } from "@src/courses-app/operations/QuestionOperations",
-  entities: [Question, QuestionTranslation, Option, OptionTranslation]
-}

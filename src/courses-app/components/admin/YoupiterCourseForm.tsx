@@ -1,4 +1,8 @@
-import { getCourseCategories, getUserInstructors, useQuery } from 'wasp/client/operations';
+import {
+  courseCategoryList,
+  useQuery,
+  instructorList as getInstructorList,
+} from 'wasp/client/operations';
 import { UserInstructor, User } from 'wasp/entities';
 import YoupiterFileUploader from '../YoupiterFileUploader';
 import YoupiterMultiSelectSearch from '../YoupiterMultiSelectSearch';
@@ -55,7 +59,7 @@ export default function YoupiterCourseForm({
     data: categories,
     isLoading: isCategoriesLoading,
     error: categoriesError
-  } = useQuery(getCourseCategories)
+  } = useQuery(courseCategoryList)
 
   const [instructorList, setInstructorList] = useState<{ id: string, name: string, email: string }[]>([]);
 
@@ -63,7 +67,7 @@ export default function YoupiterCourseForm({
     data: instructors,
     isLoading: isInstructorsLoading,
     error: instructorsError
-  } = useQuery(getUserInstructors)
+  } = useQuery(getInstructorList)
 
   useEffect(() => {
 

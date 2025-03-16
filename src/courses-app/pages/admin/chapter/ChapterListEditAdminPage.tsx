@@ -1,11 +1,16 @@
 import { type AuthUser } from 'wasp/auth';
 import {
   useQuery,
-  getCourseChapters,
-  courseGet,
+  courseChapterList,
+  getCourse,
   getLessonsByChapterIDs
 } from 'wasp/client/operations';
-import { type Course } from 'wasp/entities';
+import {
+  type Course,
+  Chapter,
+  Lesson,
+  LessonsInChapters
+} from 'wasp/entities';
 import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router';
 import { api } from "wasp/client/api";
@@ -95,7 +100,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
 
   const {
     data: courseInfo,
-  } = useQuery(courseGet, { courseId: params.courseId })
+  } = useQuery(getCourse, { courseId: params.courseId })
 
   useEffect(() => {
 
@@ -112,7 +117,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
     data: chapters,
     isLoading: isLoadingChapters,
     refetch: refetchChapters
-  } = useQuery(getCourseChapters, { courseId: params.courseId! })
+  } = useQuery(courseChapterList, { courseId: params.courseId! })
 
   /* Lezioni basate sui capitoli (query condizionale) */
   const {
@@ -121,7 +126,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
     refetch: refetchLessons
   } = useQuery(getLessonsByChapterIDs,
     {
-      chapterIDs: chapters?.map((chapter) => chapter.id) || []
+      chapterIDs: chapters?.map((chapter: Chapter) => chapter.id) || []
     },
     {
       enabled: !!chapters && chapters.length > 0 // Esegui questa query solo quando chapters è disponibile
@@ -135,9 +140,9 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
     if (chapters && lessons) {
 
       // Qui puoi aggiornare lo stato con i dati combinati di capitoli e lezioni
-      const chapterRows = chapters.map(chapter => {
+      const chapterRows = chapters.map((chapter: Chapter) => {
         // Trova tutte le lezioni per questo capitolo
-        const chapterLessons = lessons.filter(lesson => lesson.chapterId === chapter.id);
+        const chapterLessons = lessons.filter((lesson: Lesson) => lesson.chapterId === chapter.id);
 
         const isCollapsible = chapterLessons.length > 0;
 
@@ -179,7 +184,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
           },
         ];
 
-        const subRows = chapterLessons.map(lessonInChapter => {
+        const subRows = chapterLessons.map((lessonInChapter: LessonsInChapters) => {
           return (
             {
               id: String(lessonInChapter.id),
