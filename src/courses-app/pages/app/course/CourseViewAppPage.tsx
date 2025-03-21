@@ -157,8 +157,6 @@ export default function CourseViewAppPage() {
     }
   );
 
-
-
   return (
     <div className="bg-gray-50 min-h-screen mb-20">
       {/* Navbar */}

@@ -43,7 +43,12 @@ type ChapterNextLessonGetArgs = {
     currentLessonId?: string;
 };
 
-export const getChapterNextLesson: GetChapterNextLesson<ChapterNextLessonGetArgs> = async (args, context) => {
+export type GetChapterNextLessonGetResult = {
+    lesson: LessonsInChapters | null;
+    isLastInChapter: boolean;
+};
+
+export const getChapterNextLesson: GetChapterNextLesson<ChapterNextLessonGetArgs, GetChapterNextLessonGetResult> = async (args, context) => {
 
   const userId = args.userId || !context.user!.id;
   
@@ -84,7 +89,7 @@ export const getChapterNextLesson: GetChapterNextLesson<ChapterNextLessonGetArgs
     }
     
     return { 
-      lesson: chapter.lessons[0].lesson,
+      lesson: chapter.lessons[0],
       isLastInChapter: chapter.lessons.length === 1
     };
   }
@@ -105,7 +110,7 @@ export const getChapterNextLesson: GetChapterNextLesson<ChapterNextLessonGetArgs
   }
 
   // Ottieni la prossima lezione
-  const nextLesson = chapter.lessons[currentLessonIndex + 1].lesson;
+  const nextLesson = chapter.lessons[currentLessonIndex + 1];
   
   // Se c'è un userId, controlla i permessi per accedere alla lezione
   if (args.userId) {
