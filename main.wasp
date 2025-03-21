@@ -457,7 +457,7 @@ route InstructorViewAppPageRoute                 { path: "/app/instructor/:instr
 
 
 //                      LESSON ROUTES - APP 
-route LessonPlayAppPageRoute { path: "/app/lesson/:lessonId/play", to: LessonPlayAppPage }
+route LessonPlayAppPageRoute { path: "/app/play/lesson/:lessonId", to: LessonPlayAppPage }
 // ======= /app/lesson/:lessonId/play ======= Riproduzione lezione
 
 
@@ -722,10 +722,9 @@ query getChapterNextLesson {
 }
 // ======= Ottieni lezione successiva del capitolo
 
-//                      COURSE OPERATIONS
 
 
-
+//                      QUIZ OPERATIONS
 query getQuizList {
   fn: import { getQuizList } from "@src/courses-app/operations/shared/QuizOperations",
   entities: [Quiz, QuizTranslation]
@@ -768,6 +767,12 @@ query getUserQuizAttempts {
 query getLessonQuizzes {
   fn: import { getLessonQuizzes } from "@src/courses-app/operations/shared/QuizOperations",
   entities: [Lesson, Quiz, LessonQuiz]
+}
+
+//                      ENROLL OPERATIONS
+query isUserEnrolledInCourse {
+  fn: import { isUserEnrolledInCourse } from "@src/courses-app/operations/shared/EnrollmentOperations",
+  entities: [User, Course, CourseEnrollment]
 }
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

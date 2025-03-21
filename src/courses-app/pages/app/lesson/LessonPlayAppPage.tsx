@@ -22,7 +22,7 @@ export default function LessonPlayAppPage() {
 
   // Redirect early if no lessonId
   useEffect(() => {
-    if (!lessonId || !courseId) {
+    if (!lessonId) {
       navigate("*");
     }
   }, [lessonId, navigate]);
@@ -31,8 +31,7 @@ export default function LessonPlayAppPage() {
     return null;
   }
 
-
-  console.log("lessonId", lessonId, "courseId", courseId)
+  console.log("lessonId", lessonId)
 
   const { data: lesson } = useQuery(getLesson, { lessonId });
 
@@ -75,6 +74,7 @@ export default function LessonPlayAppPage() {
         lessonId={lessonId}
         lang="en"
         />
+        
       
     </div>
   );

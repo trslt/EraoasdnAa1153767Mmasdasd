@@ -12,7 +12,7 @@ import {
 import {
   useRedirect404IfMissingParams,
 } from '../../../services/ClientServices';
-import { courseEnrollment } from '../../../services/client/CourseServices';
+import EnrollContinueCourseButton from "../../../components/app/enrollment/EnrollContinueCourseButton";
 
 // Componente Header del Corso
 const CourseHeader = ({
@@ -21,6 +21,7 @@ const CourseHeader = ({
   duration,
   backgroundImage,
   progress,
+  courseId,
   onContinue,
   onShare,
   onBookmark,
@@ -32,6 +33,7 @@ const CourseHeader = ({
   duration: string,
   backgroundImage: string,
   progress: number,
+  courseId: string,
   onContinue: () => void,
   onShare: () => void,
   onBookmark: () => void,
@@ -72,19 +74,9 @@ const CourseHeader = ({
 
       {/* Pulsanti azione */}
       <div className="flex justify-between px-4 py-3 border-b border-gray-200">
-        <button
-          onClick={onContinue}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium text-sm"
-        >
-          Avvia Corso
-        </button>
-
-        <button
-          onClick={onContinue}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium text-sm"
-        >
-          Prosegui Corso
-        </button>
+      <EnrollContinueCourseButton
+        courseId={courseId}
+       />
 
         <div className="flex space-x-4">
           <button onClick={onShare} className="text-gray-600">
@@ -165,19 +157,7 @@ export default function CourseViewAppPage() {
     }
   );
 
-  const enrollCourse = async (courseId: string) => {
-    try {
 
-      const enrollment = await courseEnrollment({ courseId });
-
-
-      console.log("Iscrizione completata", enrollment);
-
-      navigate(`/app/play/${courseId}/${enrollment.nextLessonId}`);
-    } catch (error) {
-      console.error("Errore durante l'iscrizione al corso:", error instanceof Error ? error.message : 'Errore sconosciuto');
-    }
-  };
 
   return (
     <div className="bg-gray-50 min-h-screen mb-20">
@@ -209,11 +189,12 @@ export default function CourseViewAppPage() {
             duration="10h | 350 studenti"
             backgroundImage={course.image || "/api/placeholder/400/320"}
             progress={0}
-            onContinue={() => enrollCourse(course.id)}
+            onContinue={() => console.log('Continue')}
             onShare={() => console.log('Share')}
             onBookmark={() => console.log('Bookmark')}
             onInfo={() => console.log('Info')}
             onDownload={() => console.log('Download')}
+            courseId={course.id}
           />
 
           {/* Descrizione del corso */}
