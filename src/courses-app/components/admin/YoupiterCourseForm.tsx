@@ -1,7 +1,7 @@
 import {
-  courseCategoryList,
+  getCourseCategoryList,
   useQuery,
-  instructorList as getInstructorList,
+  getInstructorList,
 } from 'wasp/client/operations';
 import { UserInstructor, User } from 'wasp/entities';
 import YoupiterFileUploader from '../YoupiterFileUploader';
@@ -59,7 +59,7 @@ export default function YoupiterCourseForm({
     data: categories,
     isLoading: isCategoriesLoading,
     error: categoriesError
-  } = useQuery(courseCategoryList)
+  } = useQuery(getCourseCategoryList)
 
   const [instructorList, setInstructorList] = useState<{ id: string, name: string, email: string }[]>([]);
 

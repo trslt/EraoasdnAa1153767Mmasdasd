@@ -32,8 +32,8 @@ const AdminSidebarData: SidebarSection[] = [
                     { label: 'Tutti i Corsi', href: '/admin/courses' },
                     { label: 'Crea Categoria', href: '/admin/course/category' },
                     { label: 'Tutte le Categorie', href: '/admin/course/categories' },
-                    { label: 'Crea Skill', href: '/admin/course/category' },
-                    { label: 'Tutte le Skill', href: '/admin/course/categories' },
+                    { label: 'Crea Skill', href: '/admin/skill' },
+                    { label: 'Tutte le Skill', href: '/admin/skills' },
                 ]
             },
             {
@@ -76,7 +76,6 @@ const AdminSidebarData: SidebarSection[] = [
                 active: false,
                 href: '/admin/instructors',
                 items: [
-                    { label: 'Aggiungi Istruttore', href: '/admin/instructor' },
                     { label: 'Tutti Gli Istruttori', href: '/admin/instructors' },
                 ]
             },

@@ -6,7 +6,7 @@ import { Course } from 'wasp/entities';
 import {
   useQuery,
   getCourse,
-  courseChapterList,
+  getCourseChapterList,
   getLessonsByChapterIDs,
 } from 'wasp/client/operations';
 import {
@@ -143,7 +143,7 @@ export default function CourseViewAppPage() {
     data: chapters,
     isLoading: isLoadingChapters,
     refetch: refetchChapters
-  } = useQuery(courseChapterList,
+  } = useQuery(getCourseChapterList,
     {
       courseId: course?.id!
     },

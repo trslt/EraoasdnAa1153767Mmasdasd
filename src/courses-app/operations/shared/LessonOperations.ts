@@ -4,8 +4,8 @@ import {
     LessonsInChapters
   } from 'wasp/entities'
   import {
-    LessonGet,
-    LessonContentGet,
+    GetLesson,
+    GetLessonContent,
     GetLessonsByChapterIDs
   } from 'wasp/server/operations'
   
@@ -18,7 +18,7 @@ import {
 
   type LessonGetArgs = { lessonId: string };
 
-  export const lessonGet: LessonGet<LessonGetArgs, Lesson | null> = async (args, context) => {
+  export const getLesson: GetLesson<LessonGetArgs, Lesson | null> = async (args, context) => {
   
     return context.entities.Lesson.findUnique({
       where: {
@@ -36,7 +36,7 @@ import {
 
   type LessonContentGetArgs = { lessonId: string, lang: string };
 
-  export const lessonContentGet: LessonContentGet<LessonContentGetArgs, LessonContent[] | null> = async (args, context) => {
+  export const getLessonContent: GetLessonContent<LessonContentGetArgs, LessonContent[] | null> = async (args, context) => {
   
     return context.entities.LessonContent.findMany({
       where: {

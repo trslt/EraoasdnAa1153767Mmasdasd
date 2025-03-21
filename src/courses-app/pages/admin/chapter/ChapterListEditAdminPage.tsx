@@ -1,15 +1,13 @@
 import { type AuthUser } from 'wasp/auth';
 import {
   useQuery,
-  courseChapterList,
+  getCourseChapterList,
   getCourse,
   getLessonsByChapterIDs
 } from 'wasp/client/operations';
 import {
   type Course,
   Chapter,
-  Lesson,
-  LessonsInChapters
 } from 'wasp/entities';
 import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router';
@@ -117,7 +115,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
     data: chapters,
     isLoading: isLoadingChapters,
     refetch: refetchChapters
-  } = useQuery(courseChapterList, { courseId: params.courseId! })
+  } = useQuery(getCourseChapterList, { courseId: params.courseId! })
 
   /* Lezioni basate sui capitoli (query condizionale) */
   const {
@@ -142,7 +140,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
       // Qui puoi aggiornare lo stato con i dati combinati di capitoli e lezioni
       const chapterRows = chapters.map((chapter: Chapter) => {
         // Trova tutte le lezioni per questo capitolo
-        const chapterLessons = lessons.filter((lesson: Lesson) => lesson.chapterId === chapter.id);
+        const chapterLessons = lessons.filter(lesson => lesson.chapterId === chapter.id);
 
         const isCollapsible = chapterLessons.length > 0;
 
@@ -184,7 +182,7 @@ export default function ChapterListEditAdminPage({ user }: { user: AuthUser }) {
           },
         ];
 
-        const subRows = chapterLessons.map((lessonInChapter: LessonsInChapters) => {
+        const subRows = chapterLessons.map((lessonInChapter) => {
           return (
             {
               id: String(lessonInChapter.id),

@@ -1,9 +1,9 @@
 'use server';
 
 import {
-    AssociateLessonQuiz,
-    AddQuestionToQuiz,
-    RemoveQuestionFromQuiz
+    LessonQuizAssociate,
+    QuizQuestionAdd,
+    QuizQuestionRemove,
 } from "wasp/server/api";
 import { Quiz, LessonQuiz } from 'wasp/entities';
 import { HttpError } from "wasp/server";
@@ -29,7 +29,7 @@ interface LessonQuizParams {
     lessonId: string;
 }
 
-export const associateLessonQuiz: AssociateLessonQuiz<{}, LessonQuiz> = async (req, res, context) => {
+export const lessonQuizAssociate: LessonQuizAssociate<{}, LessonQuiz> = async (req, res, context) => {
 
     if (!isAdmin(context.user)) throw new HttpError(403);
 
@@ -88,7 +88,7 @@ interface AddQuestionToQuizBody {
     position: number;
 }
 
-export const addQuestionToQuiz: AddQuestionToQuiz<{}, {}> = async (req, res, context) => {
+export const quizQuestionAdd: QuizQuestionAdd<{}, {}> = async (req, res, context) => {
 
     if (!isAdmin(context.user)) throw new HttpError(403);
 
@@ -154,6 +154,9 @@ export const addQuestionToQuiz: AddQuestionToQuiz<{}, {}> = async (req, res, con
 
 /**
  * API Rimuovi Domanda da Quiz
+ * 
+ * @param quizId      Id del quiz
+ * @param questionId  Id della domanda
  */
 
 interface RemoveQuestionFromQuizParams {
@@ -161,7 +164,7 @@ interface RemoveQuestionFromQuizParams {
     questionId: string
 }
 
-export const removeQuestionFromQuiz: RemoveQuestionFromQuiz<{}, {}> = async (req, res, context) => {
+export const quizQuestionRemove: QuizQuestionRemove<{}, {}> = async (req, res, context) => {
     
     if (!isAdmin(context.user)) throw new HttpError(403);
 

@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import {
-    QuizGet,
+    GetQuiz,
     GetLessonQuizzes,
-    QuizList,
+    GetQuizList,
     GetUserQuizAttempts,
 } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
@@ -23,7 +23,7 @@ type QuizListBody = {
     isActive?: boolean;
 }
 
-export const quizList: QuizList<QuizListBody, any> = async (args, context) => {
+export const getQuizList: GetQuizList<QuizListBody, any> = async (args, context) => {
 
     // Verifica che l'utente sia autenticato e sia admin
     if (!context.user) {
@@ -97,7 +97,7 @@ export const quizList: QuizList<QuizListBody, any> = async (args, context) => {
  * @param quizId ID del quiz da recuperare
  */
 
-export const quizGet: QuizGet<{ quizId: string }, any> = async (args, context) => {
+export const getQuiz: GetQuiz<{ quizId: string }, any> = async (args, context) => {
     
     // Verifica che l'utente sia autenticato
     if (!context.user) {

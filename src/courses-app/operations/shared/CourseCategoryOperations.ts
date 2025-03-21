@@ -1,5 +1,5 @@
 import {
-    CourseCategoryList,
+    GetCourseCategoryList,
 } from 'wasp/server/operations';
 import {
     CourseCategory,
@@ -10,7 +10,7 @@ import {
  * 
  * @param args - No arguments
 */
-export const courseCategoryList: CourseCategoryList<void, CourseCategory[]> = async (args, context) => {
+export const getCourseCategoryList: GetCourseCategoryList<void, CourseCategory[]> = async (args, context) => {
   return context.entities.CourseCategory.findMany({
     orderBy: { name: 'asc' },
   })

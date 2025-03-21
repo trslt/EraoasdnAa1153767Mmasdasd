@@ -1,5 +1,5 @@
 import {
-    InstructorList,
+    GetInstructorList,
 } from "wasp/server/operations";
 import { UserInstructor } from "wasp/entities";
 import { HttpError } from "wasp/server";
@@ -14,7 +14,7 @@ import { isAdmin } from '../../services/UserServices';
 type InstructorListArgs = void;
 type InstructorListResult = UserInstructor[];
 
-export const instructorList: InstructorList<InstructorListArgs, InstructorListResult> = async (args, context) => {
+export const getInstructorList: GetInstructorList<InstructorListArgs, InstructorListResult> = async (args, context) => {
 
     if (!isAdmin(context.user)) throw new HttpError(403);
 

@@ -4,7 +4,7 @@ import { useRedirectHomeUnlessUserIsAdmin } from '../../../services/ClientServic
 import { Home, Layout } from 'lucide-react';
 import YoupiterSidebar from '../../../components/YoupiterSidebar';
 import AdminSidebarData from "../../../data/AdminDashboardSidebarData";
-import { useQuery, courseList } from 'wasp/client/operations';
+import { useQuery, getCourseList } from 'wasp/client/operations';
 import YoupiterCourseTable from '../../../components/admin/YoupiterCoursesTable';
 
 export default function CourseListAdminPage({ user }: { user: AuthUser }) {
@@ -27,7 +27,7 @@ export default function CourseListAdminPage({ user }: { user: AuthUser }) {
         data: courses,
         isLoading,
         error
-    } = useQuery(courseList);
+    } = useQuery(getCourseList);
 
     const handleDeleteCourse = (courseId: string) => {
         // Implementare la logica di eliminazione corso

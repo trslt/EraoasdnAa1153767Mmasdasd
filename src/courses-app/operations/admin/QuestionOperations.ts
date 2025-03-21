@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import {
-    QuestionListBySkill,
+    GetQuestionListBySkill,
 } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
 import { isAdmin } from '../../services/UserServices';
@@ -15,7 +15,7 @@ import { isAdmin } from '../../services/UserServices';
 
 type QuestionListBySkillArgs = { skillId: string; level?: number; limit?: number };
 
-export const questionListBySkill: QuestionListBySkill<QuestionListBySkillArgs, any> = async (args, context) => {
+export const getQuestionListBySkill: GetQuestionListBySkill<QuestionListBySkillArgs, any> = async (args, context) => {
   
   if (!isAdmin(context.user)) throw new HttpError(403);
 

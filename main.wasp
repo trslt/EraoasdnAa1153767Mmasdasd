@@ -292,483 +292,473 @@ page NotFoundPage {
   component: import { NotFoundPage } from "@src/client/components/NotFoundPage"
 }
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>
-// ADMIN ROUTES START
-// >>>>>>>>>>>>>>>>>>>>>>>>>>
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//                                  YOUPITER ROUTES START
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// ==========================
-// COURSE ROUTES - ADMIN
-// ==========================
+// ======= COURSE ROUTES - ADMIN =======
+route HomeAdminPageRoute                        { path: "/admin", to: HomeAdminPage }
+// === /admin ====                              Pagina iniziale dell'area amministrativa
 
-// ======= /admin ======= Pagina iniziale dell'area amministrativa
-route HomeAdminPageRoute { path: "/admin", to: HomeAdminPage }
+
+route CourseCreateAdminPageRoute                { path: "/admin/course", to: CourseCreateAdminPage }
+// === /admin/course =======                    Creazione corso
+
+
+route CourseEditAdminPageRoute                  { path: "/admin/course/:courseId/edit", to: CourseEditAdminPage }
+// === /admin/course/:courseId/edit             Modifica corso
+
+
+route CourseViewAdminPageRoute                  { path: "/admin/course/:courseId", to: CourseViewAdminPage }
+// === /admin/course/:courseId                  Dettaglio corso
+
+
+route CourseListAdminPageRoute                  { path: "/admin/courses", to: CourseListAdminPage }
+// === /admin/courses                           Lista corsi
+
+
+//                     CHAPTER ROUTES - ADMIN 
+
+route ChapterListEditAdminPageRoute             { path: "/admin/course/:courseId/chapters/edit", to: ChapterListEditAdminPage }
+// /admin/course/:courseId/chapters/edit        Modifica capitoli
+
+
+//                      LESSON ROUTES - ADMIN 
+route LessonEditAdminPageRoute                  { path: "/admin/lesson/:lessonId/edit", to: LessonEditAdminPage }
+// === /admin/lesson/:lessonId/edit             Modifica lezione
+
+//                      SKILL ROUTES - ADMIN 
+route SkillCreateAdminPageRoute                  { path: "/admin/skill", to: SkillCreateAdminPage }
+// === /admin/skill                              Creazione skill
+
+route SkillUpdateAdminPageRoute                  { path: "/admin/skill/:skillId", to: SkillUpdateAdminPage }
+// === /admin/skill/:skillId                     Aggiornamento skill
+
+route SkillListAdminPageRoute                    { path: "/admin/skills", to: SkillListAdminPage }
+// === /admin/skills                             Lista skill
+
+
+//                      CERTIFICATE ROUTES - ADMIN 
+route CertificateCreateAdminPageRoute            { path: "/admin/certificate", to: CertificateCreateAdminPage }
+// === /admin/certificate                        Creazione certificato
+
+route CertificateUpdateAdminPageRoute            { path: "/admin/certificate/:certificateId", to: CertificateUpdateAdminPage }
+// === /admin/certificate/:certificateId         Aggiornamento certificato
+
+route CertificateListAdminPageRoute              { path: "/admin/certificates", to: CertificateListAdminPage }
+// === /admin/certificates                       Lista certificati
+
+
+//                      APP ROUTES - APP 
+route HomeAppPageRoute                           { path: "/app", to: HomeAppPage }
+// === /app                                      Pagina iniziale dell'app
+
+
+//                      BADGE ROUTES - ADMIN
+route BadgeCreateAdminPageRoute                  { path: "/admin/badge", to: BadgeCreateAdminPage }
+// === /admin/badge                              Creazione badge
+
+route BadgeUpdateAdminPageRoute                  { path: "/admin/badge/:badgeId", to: BadgeUpdateAdminPage }
+// === /admin/badge/:badgeId                     Aggiornamento badge  
+
+route BadgeListAdminPageRoute                    { path: "/admin/badges", to: BadgeListAdminPage }
+// === /admin/badges                             Lista badge
+
+
+//                      QUIZ ROUTES - ADMIN
+route QuizCreateAdminPageRoute                   { path: "/admin/quiz", to: QuizCreateAdminPage }
+// === /admin/quiz                               Creazione quiz
+
+route QuizUpdateAdminPageRoute                   { path: "/admin/quiz/:quizId", to: QuizUpdateAdminPage }
+// === /admin/quiz/:quizId                       Aggiornamento quiz
+
+route QuizListAdminPageRoute                     { path: "/admin/quizzes", to: QuizListAdminPage }
+// === /admin/quizzes                            Lista quiz
+
+
+//                      INSTRUCTOR ROUTES - ADMIN
+route InstructorListAdminPageRoute               { path: "/admin/instructors", to: InstructorListAdminPage }
+// === /admin/instructors                        Lista istruttori
+
+
+//                      AUTH ROUTES - APP 
+route AuthAskPasswordResetPageRoute              { path: "/app/auth/ask-password-reset", to: AuthAskPasswordResetPage }
+// === /app/auth/ask-password-reset              Richiesta reset password
+
+
+route AuthSignupPageRoute                        { path: "/app/auth/signup", to: AuthSignupPage }
+// === /app/auth/signup                          Registrazione utente
+
+
+route AuthPasswordResetPageRoute                 { path: "/app/auth/password-reset", to: AuthPasswordResetPage }
+// === /app/auth/password-reset                  Reset password
+
+
+route AuthEmailVerificationPageRoute             { path: "/app/auth/email-verification", to: AuthEmailVerificationPage }
+// === /app/auth/email-verification              Verifica email
+
+
+route AuthLoginPageRoute                         { path: "/app/auth/login", to: AuthLoginPage }
+// === /app/auth/login                           Login utente
+
+
+
+//                      ME ROUTES - APP 
+route UserViewAppPageRoute                       { path: "/app/me", to: UserViewAppPage }
+// === /app/me                                   Profilo utente
+
+
+route UserCourseListAppPageRoute                 { path: "/app/me/courses", to: UserCourseListAppPage }
+// === /app/me/courses                           Corsi dell'utente autenticato
+
+
+route UserCertificateListAppPageRoute            { path: "/app/me/certificates", to: UserCertificateListAppPage }
+// === /app/me/certificates                      Certificati dell'utente autenticato
+
+
+route UserSettingsAppPageRoute                   { path: "/app/me/settings", to: UserSettingsAppPage }
+// === /app/me/settings                          Impostazioni utente
+
+
+
+//                      COURSE ROUTES - APP 
+route CourseListAppRoute                         { path: "/app/courses", to: CourseListAppPage }
+// === /app/courses                              Lista dei corsi
+
+
+route CourseSearchAppPageRoute                   { path: "/app/course/search", to: CourseSearchAppPage }
+// === /app/course/search                        Ricerca corsi
+
+
+route CourseViewAppPageRoute                     { path: "/app/course/:courseId", to: CourseViewAppPage }
+// === /app/course/:course                       IdDettaglio corso
+
+
+route CourseReviewAppPageRoute                   { path: "/app/course/:courseId/review", to: CourseReviewAppPage }
+// === /app/course/:courseId/review              Recensioni del corso
+
+
+route CourseNotFoundAppPageRoute                 { path: "/app/course/not-found", to: CourseNotFoundAppPage }
+// === /app/course/not-found                     Pagina corso non trovato
+
+
+route ChapterViewAppPageRoute                    { path: "/app/course/:courseId/chapter/:chapterId", to: ChapterViewAppPage }
+// /app/course/:courseId/chapter/:chapterId      Dettaglio capitolo del corso
+
+
+route LessonViewAppPageRoute                     { path: "/app/course/lesson/:lessonId", to: LessonViewAppPage }
+// === /app/course/lesson/:lessonId              Dettaglio lezione del corso
+
+
+//                      INSTRUCTOR ROUTES - APP 
+route InstructorViewAppPageRoute                 { path: "/app/instructor/:instructorId", to: InstructorViewAppPage }
+// === /app/instructor/:instructorId             Dettaglio istruttore
+
+
+
+//                      LESSON ROUTES - APP 
+route LessonPlayAppPageRoute { path: "/app/lesson/:lessonId/play", to: LessonPlayAppPage }
+// ======= /app/lesson/:lessonId/play ======= Riproduzione lezione
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//                                  YOUPITER ROUTES END
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//                                  YOUPITER PAGES START
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 page HomeAdminPage {
   authRequired: true,
   component: import HomeAdminPage from "@src/courses-app/pages/admin/HomeAdminPage"
 }
 
-// ======= /admin/course ======= Creazione corso
-route CourseCreateAdminPageRoute { path: "/admin/course", to: CourseCreateAdminPage }
 page CourseCreateAdminPage {
   authRequired: true,
   component: import CourseCreateAdminPage from "@src/courses-app/pages/admin/course/CourseCreateAdminPage"
 }
 
-// ======= /admin/course/:courseId/edit ======= Modifica corso
-route CourseEditAdminPageRoute { path: "/admin/course/:courseId/edit", to: CourseEditAdminPage }
 page CourseEditAdminPage {
   authRequired: true,
   component: import CourseEditAdminPage from "@src/courses-app/pages/admin/course/CourseEditAdminPage"
 }
 
-// ======= /admin/course/:courseId ======= Dettaglio corso
-route CourseViewAdminPageRoute { path: "/admin/course/:courseId", to: CourseViewAdminPage }
 page CourseViewAdminPage {
   authRequired: true,
   component: import CourseViewAdminPage from "@src/courses-app/pages/admin/course/CourseViewAdminPage"
 }
 
-// ======= /admin/courses ======= Lista corsi
-route CourseListAdminPageRoute { path: "/admin/courses", to: CourseListAdminPage }
 page CourseListAdminPage {
   authRequired: true,
   component: import CourseListAdminPage from "@src/courses-app/pages/admin/course/CourseListAdminPage"
 }
 
-// ==========================
-// CHAPTER ROUTES - ADMIN
-// ==========================
-
-// ======= /admin/course/:courseId/chapters/edit ======= Modifica capitoli
-route ChapterListEditAdminPageRoute { path: "/admin/course/:courseId/chapters/edit", to: ChapterListEditAdminPage }
 page ChapterListEditAdminPage {
   authRequired: true,
   component: import ChapterListEditAdminPage from "@src/courses-app/pages/admin/chapter/ChapterListEditAdminPage"
 }
 
-// ==========================
-// LESSON ROUTES - ADMIN
-// ==========================
-route LessonEditAdminPageRoute { path: "/lesson/:lessonId/edit", to: LessonEditAdminPage }
 page LessonEditAdminPage {
   authRequired: true,
   component: import LessonEditAdminPage from "@src/courses-app/pages/admin/lesson/LessonEditAdminPage"
 }
 
-// <<<<<<<<<<<<<<<<<<<<<<<<<<
-// ADMIN ROUTES END
-// <<<<<<<<<<<<<<<<<<<<<<<<<<
+page SkillCreateAdminPage {
+  authRequired: true,
+  component: import SkillCreateAdminPage from "@src/courses-app/pages/admin/skill/SkillCreateAdminPage"
+}
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>
-// APP ROUTES START
-// >>>>>>>>>>>>>>>>>>>>>>>>>>
+page SkillUpdateAdminPage {
+  authRequired: true,
+  component: import SkillUpdateAdminPage from "@src/courses-app/pages/admin/skill/SkillUpdateAdminPage"
+}
 
-// ======= /app ======= Pagina iniziale dell'app
-route HomeAppPageRoute { path: "/app", to: HomeAppPage }
+page SkillListAdminPage {
+  authRequired: true,
+  component: import SkillListAdminPage from "@src/courses-app/pages/admin/skill/SkillListAdminPage"
+}
+
+page CertificateCreateAdminPage {
+  authRequired: true,
+  component: import CertificateCreateAdminPage from "@src/courses-app/pages/admin/certificate/CertificateCreateAdminPage"
+}
+
+page CertificateUpdateAdminPage {
+  authRequired: true,
+  component: import CertificateUpdateAdminPage from "@src/courses-app/pages/admin/certificate/CertificateUpdateAdminPage"
+}
+
+page CertificateListAdminPage {
+  authRequired: true,
+  component: import CertificateListAdminPage from "@src/courses-app/pages/admin/certificate/CertificateListAdminPage"
+}
+
+page BadgeCreateAdminPage {
+  authRequired: true,
+  component: import BadgeCreateAdminPage from "@src/courses-app/pages/admin/badge/BadgeCreateAdminPage"
+}
+
+page BadgeUpdateAdminPage {
+  authRequired: true,
+  component: import BadgeUpdateAdminPage from "@src/courses-app/pages/admin/badge/BadgeUpdateAdminPage"
+}
+
+page BadgeListAdminPage {
+  authRequired: true,
+  component: import BadgeListAdminPage from "@src/courses-app/pages/admin/badge/BadgeListAdminPage"
+}
+
+page QuizCreateAdminPage {
+  authRequired: true,
+  component: import QuizCreateAdminPage from "@src/courses-app/pages/admin/quiz/QuizCreateAdminPage"
+}
+
+page QuizUpdateAdminPage {
+  authRequired: true,
+  component: import QuizUpdateAdminPage from "@src/courses-app/pages/admin/quiz/QuizUpdateAdminPage"
+}
+
+page QuizListAdminPage {
+  authRequired: true,
+  component: import QuizListAdminPage from "@src/courses-app/pages/admin/quiz/QuizListAdminPage"
+}
+
+page InstructorListAdminPage {
+  authRequired: true,
+  component: import InstructorListAdminPage from "@src/courses-app/pages/admin/instructor/InstructorListAdminPage"
+}
+
 page HomeAppPage {
   authRequired: true,
   component: import HomeAppPage from "@src/courses-app/pages/app/HomeAppPage"
 }
 
-// ==========================
-// AUTH ROUTES - APP
-// ==========================
-
-// ======= /app/auth/ask-password-reset ======= Richiesta reset password
-route AuthAskPasswordResetPageRoute { path: "/app/auth/ask-password-reset", to: AuthAskPasswordResetPage }
 page AuthAskPasswordResetPage {
   component: import AppAskPasswordResetPage from "@src/courses-app/pages/auth/AuthAskPasswordResetPage"
 }
 
-// ======= /app/auth/signup ======= Registrazione utente
-route AuthSignupPageRoute { path: "/app/auth/signup", to: AuthSignupPage }
 page AuthSignupPage {
   component: import AuthSignupPage from "@src/courses-app/pages/auth/AuthSignupPage"
 }
 
-// ======= /app/auth/password-reset ======= Reset password
-route AuthPasswordResetPageRoute { path: "/app/auth/password-reset", to: AuthPasswordResetPage }
 page AuthPasswordResetPage {
   component: import AuthPasswordResetPage from "@src/courses-app/pages/auth/AuthPasswordResetPage"
 }
 
-// ======= /app/auth/email-verification ======= Verifica email
-route AuthEmailVerificationPageRoute { path: "/app/auth/email-verification", to: AuthEmailVerificationPage }
 page AuthEmailVerificationPage {
   component: import AuthEmailVerificationPage from "@src/courses-app/pages/auth/AuthEmailVerificationPage"
 }
 
-// ======= /app/auth/login ======= Login utente
-route AuthLoginPageRoute { path: "/app/auth/login", to: AuthLoginPage }
 page AuthLoginPage {
   component: import AppLoginPage from "@src/courses-app/pages/auth/AuthLoginPage"
 }
 
-// ==========================
-// USER ROUTES - APP
-// ==========================
-
-// ======= /app/me ======= Profilo utente
-route UserViewAppPageRoute { path: "/app/me", to: UserViewAppPage }
 page UserViewAppPage {
   authRequired: true,
   component: import UserViewAppPage from "@src/courses-app/pages/app/user/UserViewAppPage"
 }
 
-// ======= /app/me/courses ======= Corsi dell'utente autenticato
-route UserCourseListAppPageRoute { path: "/app/me/courses", to: UserCourseListAppPage }
 page UserCourseListAppPage {
   authRequired: true,
   component: import UserCourseListAppPage from "@src/courses-app/pages/app/user/UserCourseListAppPage"
 }
 
-// ======= /app/me/certificates ======= Certificati dell'utente autenticato
-route UserCertificateListAppPageRoute { path: "/app/me/certificates", to: UserCertificateListAppPage }
 page UserCertificateListAppPage {
   authRequired: true,
   component: import UserCertificateListAppPage from "@src/courses-app/pages/app/user/UserCertificateListAppPage"
 }
 
-// ======= /app/me/settings ======= Impostazioni utente
-route UserSettingsAppPageRoute { path: "/app/me/settings", to: UserSettingsAppPage }
 page UserSettingsAppPage {
   authRequired: true,
   component: import UserSettingsAppPage from "@src/courses-app/pages/app/user/UserSettingsAppPage"
 }
 
-// ==========================
-// COURSE ROUTES - APP
-// ==========================
-
-// ======= /app/courses ======= Lista dei corsi
-route CourseListAppRoute { path: "/app/courses", to: CourseListAppPage }
 page CourseListAppPage {
   authRequired: true,
   component: import CourseListAppPage from "@src/courses-app/pages/app/course/CourseListAppPage"
 }
 
-// ======= /app/course/search ======= Ricerca corsi
-route CourseSearchAppPageRoute { path: "/app/course/search", to: CourseSearchAppPage }
 page CourseSearchAppPage {
   authRequired: true,
   component: import SearchCoursePage from "@src/courses-app/pages/app/course/CourseSearchAppPage"
 }
 
-// ======= /app/course/:courseId ======= Dettaglio corso
-route CourseViewAppPageRoute { path: "/app/course/:courseId", to: CourseViewAppPage }
 page CourseViewAppPage {
   authRequired: true,
   component: import AppCoursePage from "@src/courses-app/pages/app/course/CourseViewAppPage"
 }
 
-// ======= /app/course/:courseId/review ======= Recensioni del corso
-route CourseReviewAppPageRoute { path: "/app/course/:courseId/review", to: CourseReviewAppPage }
 page CourseReviewAppPage {
   authRequired: true,
   component: import CourseReviewAppPage from "@src/courses-app/pages/app/course/CourseReviewAppPage"
 }
 
-// ======= /app/course/not-found ======= Pagina corso non trovato
-route CourseNotFoundAppPageRoute { path: "/app/course/not-found", to: CourseNotFoundAppPage }
 page CourseNotFoundAppPage {
   authRequired: true,
   component: import CourseNotFoundAppPage from "@src/courses-app/pages/app/course/CourseNotFoundAppPage"
 }
 
-// ==========================
-// CHAPTER ROUTES - APP
-// ==========================
-
-// ======= /app/course/:courseId/chapter/:chapterId ======= Dettaglio capitolo del corso
-route ChapterViewAppPageRoute { path: "/app/course/:courseId/chapter/:chapterId", to: ChapterViewAppPage }
 page ChapterViewAppPage {
   authRequired: true,
   component: import ChapterViewAppPage from "@src/courses-app/pages/app/chapter/ChapterViewAppPage"
 }
 
-// ==========================
-// INSTRUCTOR ROUTES - APP
-// ==========================
-
-// ======= /app/instructor/:instructorId ======= Dettaglio istruttore
-route InstructorViewAppPageRoute { path: "/app/instructor/:instructorId", to: InstructorViewAppPage }
 page InstructorViewAppPage {
   authRequired: true,
   component: import InstructorPage from "@src/courses-app/pages/app/instructor/InstructorViewAppPage"
 }
 
-// ==========================
-// LESSON ROUTES - APP
-// ==========================
-
-// ======= /app/course/lesson/:lessonId ======= Dettaglio lezione del corso
-route LessonViewAppPageRoute { path: "/app/course/lesson/:lessonId", to: LessonViewAppPage }
 page LessonViewAppPage {
   authRequired: true,
   component: import LessonViewAppPage from "@src/courses-app/pages/app/lesson/LessonViewAppPage"
 }
 
-// ======= /app/lesson/:lessonId/play ======= Riproduzione lezione
-route LessonPlayAppPageRoute { path: "/app/lesson/:lessonId/play", to: LessonPlayAppPage }
 page LessonPlayAppPage {
   authRequired: true,
   component: import LessonPlayAppPage from "@src/courses-app/pages/app/lesson/LessonPlayAppPage"
 }
-// <<<<<<<<<<<<<<<<<<<<<<<<<<
-// APP ROUTES END
-// <<<<<<<<<<<<<<<<<<<<<<<<<<
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//                                  YOUPITER PAGES END
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-// ==========================
-// CHAPTER - OPERATIONS
-// ==========================
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//                                  YOUPITER OPERATIONS START
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+//                      COURSE OPERATIONS
 
 query getLessonsByChapterIDs {
   fn: import { getLessonsByChapterIDs } from "@src/courses-app/operations/shared/LessonOperations",
   entities: [LessonsInChapters]
 }
+// ======= Ottieni lezioni dei capitoli
 
-//#apis Middleware per CORS
-apiNamespace coursesAppNamespaceMiddlewareFn {
-  middlewareConfigFn: import { coursesAppNamespaceMiddlewareFn } from "@src/courses-app/api/GeneralApi.ts",
-  path: "/api"
-}
-
-// ==========================
-// COURSE - API & OPERATIONS
-// ==========================
-
-// ======= Dettaglio Corso
 query getCourse {
   fn: import { getCourse } from "@src/courses-app/operations/shared/CourseOperations",
   entities: [Course]
 }
+// ======= Dettaglio Corso
 
-// ======= Lista Corsi
 query getCourseList {
-  fn: import { courseList } from "@src/courses-app/operations/shared/CourseOperations",
+  fn: import { getCourseList } from "@src/courses-app/operations/shared/CourseOperations",
   entities: [Course]
 }
+// ======= Lista Corsi
 
-// ======= Lista Categoria dei Corsi
-query courseCategoryList {
-  fn: import { courseCategoryList } from "@src/courses-app/operations/shared/CourseCategoryOperations",
+
+query getCourseCategoryList {
+  fn: import { getCourseCategoryList } from "@src/courses-app/operations/shared/CourseCategoryOperations",
   entities: [CourseCategory]
 }
+// ======= Lista Categoria dei Corsi
 
-// ======= Lista Capitoli per Corso
-query courseChapterList {
-  fn: import { courseChapterList } from "@src/courses-app/operations/shared/ChapterOperations",
+
+query getCourseChapterList {
+  fn: import { getCourseChapterList } from "@src/courses-app/operations/shared/ChapterOperations",
   entities: [Chapter]
 }
+// ======= Lista Capitoli per Corso
 
-// ======= /api/admin/course ======= Creazione corso
-api CourseCreate { 
-  fn: import { courseCreate } from "@src/courses-app/api/admin/CourseApi",
-  httpRoute: (POST, "/api/admin/course"),
-  auth: true,
-  entities: [Course]
-}
+//                      LESSON OPERATIONS
 
-// ======= /api/admin/course/:courseId ======= Aggiornamento corso
-api CourseUpdate { 
-  fn: import { courseUpdate } from "@src/courses-app/api/admin/CourseApi",
-  httpRoute: (PUT, "/api/admin/course/:courseId"),
-  auth: true,
-  entities: [Course, CourseCategory]
-}
-
-// ======= /api/admin/course/:courseId/cover ======= Aggiornamento copertina corso
-api CourseCoverUpdate { 
-  fn: import { courseCoverUpdate } from "@src/courses-app/api/admin/CourseApi",
-  httpRoute: (PUT, "/api/admin/course/:courseId/cover"),
-  auth: true,
-  entities: [Course]
-}
-
-// ======= /api/admin/course/:courseId/categories ======= Aggiornamento categorie corso
-api CourseCategoryUpdate { 
-  fn: import { courseCategoryUpdate } from "@src/courses-app/api/admin/CourseApi",
-  httpRoute: (PUT, "/api/admin/course/:courseId/categories"),
-  auth: true,
-  entities: [Course, CourseCategory]
-}
-
-// ======= /api/admin/course/:courseId/instructors ======= Aggiornamento istruttori corso
-api CourseInstructorUpdate { 
-  fn: import { courseInstructorUpdate } from "@src/courses-app/api/admin/CourseApi",
-  httpRoute: (PUT, "/api/admin/course/:courseId/instructors"),
-  auth: true,
-  entities: [Course, UserInstructor]
-}
-
-// ==========================
-// LESSON - API & OPERATIONS
-// ==========================
-
-// ======= Dettaglio Lezione
-query lessonGet {
-  fn: import { lessonGet } from "@src/courses-app/operations/shared/LessonOperations",
+query getLesson {
+  fn: import { getLesson } from "@src/courses-app/operations/shared/LessonOperations",
   entities: [Lesson]
 }
+// ======= Dettaglio Lezione
 
-// ======= Dettaglio contenuo lezione
-query lessonContentGet {
-  fn: import { lessonContentGet } from "@src/courses-app/operations/shared/LessonOperations",
+query getLessonContent {
+  fn: import { getLessonContent } from "@src/courses-app/operations/shared/LessonOperations",
   entities: [LessonContent]
 }
+// ======= Dettaglio contenuo lezione
 
-// ======= Ottieni lezione successiva del capitolo
-query chapterNextLessonGet {
-  fn: import { chapterNextLessonGet } from "@src/courses-app/operations/shared/ChapterOperations",
+
+query getChapterNextLesson {
+  fn: import { getChapterNextLesson } from "@src/courses-app/operations/shared/ChapterOperations",
   entities: [Chapter, Lesson, CourseEnrollment, StudentProgress]
 }
+// ======= Ottieni lezione successiva del capitolo
 
-// ======= /api/admin/lesson ======= Creazione lezione
-api LessonCreate { 
-  fn: import { lessonCreate } from "@src/courses-app/api/admin/LessonApi",
-  httpRoute: (POST, "/api/admin/lesson"),
-  auth: true,
-  entities: [Lesson, LessonsInChapters, LessonContent]
-}
+//                      COURSE OPERATIONS
 
-// ==========================
-// Chapter - API & OPERATIONS
-// ========================== 
 
-// ======= /api/admin/course/:courseId/chapter ======= Creazione capitolo
-api ChapterCreate { 
-  fn: import { chapterCreate } from "@src/courses-app/api/admin/ChapterApi",
-  httpRoute: (PUT, "/api/admin/course/:courseId/chapter"),
-  auth: true,
-  entities: [Chapter]
-}
 
-// ======= Lista Quiz
-query quizList {
-  fn: import { quizList } from "@src/courses-app/operations/shared/QuizOperations",
+query getQuizList {
+  fn: import { getQuizList } from "@src/courses-app/operations/shared/QuizOperations",
   entities: [Quiz, QuizTranslation]
 }
+// ======= Lista Quiz
 
-// ======= Dettaglio Quiz
-query quizGet {
-  fn: import { quizGet } from "@src/courses-app/operations/shared/QuizOperations",
+
+query getQuiz {
+  fn: import { getQuiz } from "@src/courses-app/operations/shared/QuizOperations",
   entities: [Quiz, QuizTranslation, QuizQuestion, Question]
 }
+// ======= Dettaglio Quiz
 
-// ======= /api/admin/quiz ======= Creazione quiz
-api QuizCreate { 
-  fn: import { quizCreate } from "@src/courses-app/api/admin/QuizApi",
-  httpRoute: (POST, "/api/admin/quiz"),
-  auth: true,
-  entities: [Quiz, QuizTranslation]
+
+query getQuestion {
+  fn: import { getQuestion } from "@src/courses-app/operations/shared/QuestionOperations",
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
 }
-
-// ======= /api/admin/quiz/:quizId ======= Aggiornamento quiz
-api QuizUpdate { 
-  fn: import { quizUpdate } from "@src/courses-app/api/admin/QuizApi",
-  httpRoute: (PUT, "/api/admin/quiz/:quizId"),
-  auth: true,
-  entities: [Quiz, QuizTranslation]
-}
-
-// ======= /api/admin/quiz/:quizId ======= Eliminazione quiz
-api QuizDelete { 
-  fn: import { quizDelete } from "@src/courses-app/api/admin/QuizApi",
-  httpRoute: (DELETE, "/api/admin/quiz/:quizId"),
-  auth: true,
-  entities: [Quiz]
-}
-
-// ======= /api/admin/lesson/:lessonId/content ======= Aggiornamento contenuto lezione
-api LessonContentUpdate {
-  fn: import { lessonContentUpdate } from "@src/courses-app/api/admin/LessonContentApi",
-  httpRoute: (PUT, "/api/admin/lesson/:lessonId/content"),
-  auth: true,
-  entities: [LessonContent]
-}
-
 // ======= Dettaglio Domanda
-query questionGet {
-  fn: import { questionGet } from "@src/courses-app/operations/shared/QuestionOperations",
+
+
+query getQuestionListBySkill {
+  fn: import { getQuestionListBySkill } from "@src/courses-app/operations/admin/QuestionOperations",
   entities: [Question, QuestionTranslation, Option, OptionTranslation]
 }
-
 // ======= Lista Domande per Skill
-query questionListBySkill {
-  fn: import { questionListBySkill } from "@src/courses-app/operations/admin/QuestionOperations",
-  entities: [Question, QuestionTranslation, Option, OptionTranslation]
-}
 
-// ======= /api/admin/question ======= Creazione domanda
-api QuestionCreate { 
-  fn: import { questionCreate } from "@src/courses-app/api/admin/QuestionApi",
-  httpRoute: (POST, "/api/admin/question"),
-  auth: true,
-  entities: [Question, QuestionTranslation, Option, OptionTranslation]
-}
 
-// ======= /api/admin/question/:questionId ======= Aggiornamento domanda
-api QuestionUpdate { 
-  fn: import { questionUpdate } from "@src/courses-app/api/admin/QuestionApi",
-  httpRoute: (PUT, "/api/admin/question/:questionId"),
-  auth: true,
-  entities: [Question, QuestionTranslation, Option, OptionTranslation]
-}
-
-// ======= /api/admin/question/:questionId ======= Eliminazione domanda
-api QuestionDelete { 
-  fn: import { questionDelete } from "@src/courses-app/api/admin/QuestionApi",
-  httpRoute: (DELETE, "/api/admin/question/:questionId"),
-  auth: true,
-  entities: [Question]
-}
-
-// ======= Lista Istruttori
-query instructorList {
-  fn: import { instructorList } from "@src/courses-app/operations/admin/InstructorOperations",
+query getInstructorList {
+  fn: import { getInstructorList } from "@src/courses-app/operations/admin/InstructorOperations",
   entities: [UserInstructor]
 }
-
-
-api GetUploadPresignedURL { 
-  fn: import { getUploadPresignedURL } from "@src/courses-app/api/AdminApi.ts",
-  httpRoute: (POST, "/api/admin/permission/upload"),
-  auth: true,
-  entities: [Course]
-}
-
-
-api CourseEnrollment { 
-  fn: import { courseEnrollment } from "@src/courses-app/api/CourseApi",
-  httpRoute: (POST, "/api/course/:courseId/enroll"),
-  auth: true,
-  entities: [Course, CourseEnrollment, StudentProgress]
-}
-
-// QUIZ
-api AssociateLessonQuiz { 
-  fn: import { associateLessonQuiz } from "@src/courses-app/api/QuizApi",
-  httpRoute: (POST, "/api/admin/lesson/:lessonId/quiz"),
-  auth: true,
-  entities: [Lesson, Quiz, LessonQuiz]
-}
-
-api AddQuestionToQuiz { 
-  fn: import { addQuestionToQuiz } from "@src/courses-app/api/QuizApi",
-  httpRoute: (POST, "/api/admin/quiz/:quizId/questions"),
-  auth: true,
-  entities: [Quiz, Question, QuizQuestion]
-}
-
-api RemoveQuestionFromQuiz { 
-  fn: import { removeQuestionFromQuiz } from "@src/courses-app/api/QuizApi",
-  httpRoute: (DELETE, "/api/admin/quiz/:quizId/questions/:questionId"),
-  auth: true,
-  entities: [Quiz, Question, QuizQuestion]
-}
-
+// ======= Lista Istruttori
 
 query getUserQuizAttempts {
   fn: import { getUserQuizAttempts } from "@src/courses-app/operations/shared/QuizOperations",
@@ -779,9 +769,300 @@ query getLessonQuizzes {
   fn: import { getLessonQuizzes } from "@src/courses-app/operations/shared/QuizOperations",
   entities: [Lesson, Quiz, LessonQuiz]
 }
-// ==========================
-// QUIZ - API
-// ==========================
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//                                  YOUPITER OPERATIONS END
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//                                  YOUPITER APIs START
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+//                      CHAPTER API
+
+//#apis Middleware per CORS
+apiNamespace coursesAppNamespaceMiddlewareFn {
+  middlewareConfigFn: import { coursesAppNamespaceMiddlewareFn } from "@src/courses-app/api/GeneralApi.ts",
+  path: "/api"
+}
+
+api ChapterCreate { 
+  fn: import { chapterCreate } from "@src/courses-app/api/admin/ChapterApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId/chapter"),
+  auth: true,
+  entities: [Chapter]
+}
+// ======= /api/admin/course/:courseId/chapter ======= Creazione capitolo
+
+api CourseCreate { 
+  fn: import { courseCreate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (POST, "/api/admin/course"),
+  auth: true,
+  entities: [Course]
+}
+// ======= /api/admin/course ======= Creazione corso
+
+api CourseUpdate { 
+  fn: import { courseUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId"),
+  auth: true,
+  entities: [Course, CourseCategory]
+}
+// ======= /api/admin/course/:courseId ======= Aggiornamento corso
+
+api CourseCoverUpdate { 
+  fn: import { courseCoverUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId/cover"),
+  auth: true,
+  entities: [Course]
+}
+// ======= /api/admin/course/:courseId/cover ======= Aggiornamento copertina corso  
+
+api CourseCategoryUpdate { 
+  fn: import { courseCategoryUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId/categories"),
+  auth: true,
+  entities: [Course, CourseCategory]
+}
+// ======= /api/admin/course/:courseId/categories ======= Aggiornamento categorie corso
+
+api CourseInstructorUpdate { 
+  fn: import { courseInstructorUpdate } from "@src/courses-app/api/admin/CourseApi",
+  httpRoute: (PUT, "/api/admin/course/:courseId/instructors"),
+  auth: true,
+  entities: [Course, UserInstructor]
+}
+// ======= /api/admin/course/:courseId/instructors ======= Aggiornamento istruttori corso
+
+api LessonCreate { 
+  fn: import { lessonCreate } from "@src/courses-app/api/admin/LessonApi",
+  httpRoute: (POST, "/api/admin/lesson"),
+  auth: true,
+  entities: [Lesson, LessonsInChapters, LessonContent]
+}
+// ======= /api/admin/lesson ======= Creazione lezione
+
+api QuizCreate { 
+  fn: import { quizCreate } from "@src/courses-app/api/admin/QuizApi",
+  httpRoute: (POST, "/api/admin/quiz"),
+  auth: true,
+  entities: [Quiz, QuizTranslation]
+}
+// ======= /api/admin/quiz ======= Creazione quiz
+
+api QuizUpdate { 
+  fn: import { quizUpdate } from "@src/courses-app/api/admin/QuizApi",
+  httpRoute: (PUT, "/api/admin/quiz/:quizId"),
+  auth: true,
+  entities: [Quiz, QuizTranslation]
+}
+// ======= /api/admin/quiz/:quizId ======= Aggiornamento quiz
+
+api QuizDelete { 
+  fn: import { quizDelete } from "@src/courses-app/api/admin/QuizApi",
+  httpRoute: (DELETE, "/api/admin/quiz/:quizId"),
+  auth: true,
+  entities: [Quiz]
+}
+// ======= /api/admin/quiz/:quizId ======= Eliminazione quiz
+
+api LessonContentUpdate {
+  fn: import { lessonContentUpdate } from "@src/courses-app/api/admin/LessonContentApi",
+  httpRoute: (PUT, "/api/admin/lesson/:lessonId/content"),
+  auth: true,
+  entities: [LessonContent]
+}
+// ======= /api/admin/lesson/:lessonId/content ======= Aggiornamento contenuto lezione
+
+api QuestionCreate { 
+  fn: import { questionCreate } from "@src/courses-app/api/admin/QuestionApi",
+  httpRoute: (POST, "/api/admin/question"),
+  auth: true,
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+// ======= /api/admin/question ======= Creazione domanda
+
+api QuestionUpdate { 
+  fn: import { questionUpdate } from "@src/courses-app/api/admin/QuestionApi",
+  httpRoute: (PUT, "/api/admin/question/:questionId"),
+  auth: true,
+  entities: [Question, QuestionTranslation, Option, OptionTranslation]
+}
+// ======= /api/admin/question/:questionId ======= Aggiornamento domanda
+
+api QuestionDelete { 
+  fn: import { questionDelete } from "@src/courses-app/api/admin/QuestionApi",
+  httpRoute: (DELETE, "/api/admin/question/:questionId"),
+  auth: true,
+  entities: [Question]
+}
+// ======= /api/admin/question/:questionId ======= Eliminazione domanda
+
+api UserCourseEnroll { 
+  fn: import { userCourseEnroll } from "@src/courses-app/api/CourseApi",
+  httpRoute: (POST, "/api/course/:courseId/enroll"),
+  auth: true,
+  entities: [Course, CourseEnrollment, StudentProgress]
+}
+// ======= /api/course/:courseId/enroll ======= Iscrizione corso
+
+api LessonQuizAssociate { 
+  fn: import { lessonQuizAssociate } from "@src/courses-app/api/QuizApi",
+  httpRoute: (POST, "/api/admin/lesson/:lessonId/quizzes"),
+  auth: true,
+  entities: [Lesson, Quiz, LessonQuiz]
+}
+// ======= /api/admin/lesson/:lessonId/quizzes ======= Associazione quiz alla lezione
+
+api QuizQuestionAdd { 
+  fn: import { quizQuestionAdd } from "@src/courses-app/api/QuizApi",
+  httpRoute: (POST, "/api/admin/quiz/:quizId/questions"),
+  auth: true,
+  entities: [Quiz, Question, QuizQuestion]
+}
+// ======= /api/admin/quiz/:quizId/questions ======= Aggiungi domanda al quiz
+
+api QuizQuestionRemove { 
+  fn: import { quizQuestionRemove } from "@src/courses-app/api/QuizApi",
+  httpRoute: (DELETE, "/api/admin/quiz/:quizId/questions/:questionId"),
+  auth: true,
+  entities: [Quiz, Question, QuizQuestion]
+}
+// ======= /api/admin/quiz/:quizId/questions/:questionId ======= Rimuovi domanda dal quiz
+
+api GetUploadPresignedURL { 
+  fn: import { getUploadPresignedURL } from "@src/courses-app/api/AdminApi.ts",
+  httpRoute: (POST, "/api/admin/permission/upload"),
+  auth: true,
+  entities: [Course]
+}
+// ======= /api/admin/permission/upload ======= Ottieni URL di caricamento
+
+api BadgeCreate { 
+  fn: import { badgeCreate } from "@src/courses-app/api/admin/BadgeApi",
+  httpRoute: (POST, "/api/admin/badge"),
+  auth: true,
+  entities: [Badge]
+}
+// ======= /api/admin/badge ======= Creazione badge
+
+api BadgeUpdate { 
+  fn: import { badgeUpdate } from "@src/courses-app/api/admin/BadgeApi",
+  httpRoute: (PUT, "/api/admin/badge/:badgeId"),
+  auth: true,
+  entities: [Badge]
+}
+// ======= /api/admin/badge/:badgeId ======= Aggiornamento badge
+
+api BadgeDelete { 
+  fn: import { badgeDelete } from "@src/courses-app/api/admin/BadgeApi",
+  httpRoute: (DELETE, "/api/admin/badge/:badgeId"),
+  auth: true,
+  entities: [Badge]
+}
+// ======= /api/admin/badge/:badgeId ======= Eliminazione badge
+
+api BadgeList { 
+  fn: import { badgeList } from "@src/courses-app/api/admin/BadgeApi",
+  httpRoute: (GET, "/api/admin/badge/:badgeId"),
+  auth: true,
+  entities: [Badge]
+}
+// ======= /api/admin/badge/:badgeId ======= Lista badge
+
+api CertificateCreate { 
+  fn: import { certificateCreate } from "@src/courses-app/api/admin/CertificateApi",
+  httpRoute: (POST, "/api/admin/certificate"),
+  auth: true,
+  entities: [Certificate]
+}
+// ======= /api/admin/certificate ======= Creazione Certificato
+
+api CertificateUpdate {
+  fn: import { certificateUpdate } from "@src/courses-app/api/admin/CertificateApi",
+  httpRoute: (PUT, "/api/admin/certificate/:certificateId"),
+  auth: true,
+  entities: [Certificate]
+}
+// ======= /api/admin/certificate/:certificateId ======= Aggiornamento Certificato
+
+api CertificateDelete {
+  fn: import { certificateDelete } from "@src/courses-app/api/admin/CertificateApi",
+  httpRoute: (DELETE, "/api/admin/certificate/:certificateId"),
+  auth: true,
+  entities: [Certificate]
+}
+// ======= /api/admin/certificate/:certificateId ======= Eliminazione Certificato
+
+api CertificateList {
+  fn: import { certificateList } from "@src/courses-app/api/admin/CertificateApi",
+  httpRoute: (GET, "/api/admin/certificate/:certificateId"),
+  auth: true,
+  entities: [Certificate]
+}
+// ======= /api/admin/certificate/:certificateId ======= Lista Certificati
+
+api QuizList {
+  fn: import { quizList } from "@src/courses-app/api/admin/QuizApi",
+  httpRoute: (GET, "/api/admin/quiz/:quizId"),
+  auth: true,
+  entities: [Quiz]
+}
+// ======= /api/admin/quiz ======= Lista Quiz
+
+api SkillCreate {
+  fn: import { skillCreate } from "@src/courses-app/api/admin/SkillApi",
+  httpRoute: (POST, "/api/admin/skill"),
+  auth: true,
+  entities: [Skill]
+}
+// ======= /api/admin/skill ======= Creazione Skill
+
+api SkillUpdate {
+  fn: import { skillUpdate } from "@src/courses-app/api/admin/SkillApi",
+  httpRoute: (PUT, "/api/admin/skill/:skillId"),
+  auth: true,
+  entities: [Skill]
+}
+// ======= /api/admin/skill/:skillId ======= Aggiornamento Skill  
+
+api SkillDelete {
+  fn: import { skillDelete } from "@src/courses-app/api/admin/SkillApi",
+  httpRoute: (DELETE, "/api/admin/skill/:skillId"),
+  auth: true,
+  entities: [Skill]
+}
+// ======= /api/admin/skill/:skillId ======= Eliminazione Skill
+
+api SkillList {
+  fn: import { skillList } from "@src/courses-app/api/admin/SkillApi",
+  httpRoute: (GET, "/api/admin/skill"),
+  auth: true,
+  entities: [Skill]
+}
+// ======= /api/admin/skill ======= Lista Skill
+
+api InstructorCreate {
+  fn: import { instructorCreate } from "@src/courses-app/api/admin/InstructorApi",
+  httpRoute: (POST, "/api/admin/instructor"),
+  auth: true,
+  entities: [UserInstructor, User]
+}
+// ======= /api/admin/instructor ======= Creazione Istruttore
+
+api InstructorDelete {
+  fn: import { instructorDelete } from "@src/courses-app/api/admin/InstructorApi",
+  httpRoute: (DELETE, "/api/admin/instructor/:instructorId"),
+  auth: true,
+  entities: [UserInstructor, User]
+}
+// ======= /api/admin/instructor/:instructorId ======= Eliminazione Istruttore
+
+api InstructorList {
+  fn: import { instructorList } from "@src/courses-app/api/admin/InstructorApi",
+  httpRoute: (GET, "/api/admin/instructor"),
+  auth: true,
+  entities: [UserInstructor, User]
+}
+// ======= /api/admin/instructor ======= Lista Istruttori

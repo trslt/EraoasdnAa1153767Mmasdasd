@@ -4,6 +4,7 @@ import {
     QuizCreate,
     QuizUpdate,
     QuizDelete,
+    QuizList,
 } from "wasp/server/api";
 import { Quiz } from 'wasp/entities';
 
@@ -185,3 +186,20 @@ export const quizDelete: QuizDelete<{}, {}> = async (req, res, context) => {
         throw new HttpError(500, "Errore interno del server");
     }
 };
+
+/**
+ * API Quiz List
+*/
+export const quizList: QuizList<{}, Quiz[]> = async (req, res, context) => {
+    
+    if (!isAdmin(context.user)) throw new HttpError(403);
+
+    try {
+        const quizzes = await prisma.quiz.findMany();
+
+        return res.json(quizzes);
+    } catch (error) {
+        console.error("Errore nel recupero della lista dei quiz:", error);
+        throw new HttpError(500, "Errore interno del server");
+    }
+}

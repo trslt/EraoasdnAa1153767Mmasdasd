@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import {
-    QuestionGet,
+    GetQuestion,
 } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
 
@@ -12,7 +12,7 @@ import { HttpError } from 'wasp/server';
 
 type QuestionGetArgs = { questionId: string };
 
-export const questionGet: QuestionGet<QuestionGetArgs, any> = async (args, context) => {
+export const getQuestion: GetQuestion<QuestionGetArgs, any> = async (args, context) => {
   // Verifica che l'utente sia autenticato
   if (!context.user) {
     throw new HttpError(401, 'Non autorizzato');

@@ -1,6 +1,6 @@
 import {
-    CourseChapterList,
-    ChapterNextLessonGet,
+    GetCourseChapterList,
+    GetChapterNextLesson,
 } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
 import {
@@ -18,7 +18,7 @@ import {
 type CourseChapterListArgs = { courseId: string };
 type CourseChapterListResult = Chapter[];
 
-export const courseChapterList: CourseChapterList<CourseChapterListArgs, CourseChapterListResult> = async (args, context) => {
+export const getCourseChapterList: GetCourseChapterList<CourseChapterListArgs, CourseChapterListResult> = async (args, context) => {
 
     return context.entities.Chapter.findMany({
         where: {
@@ -43,7 +43,7 @@ type ChapterNextLessonGetArgs = {
     currentLessonId?: string;
 };
 
-export const chapterNextLessonGet: ChapterNextLessonGet<ChapterNextLessonGetArgs> = async (args, context) => {
+export const getChapterNextLesson: GetChapterNextLesson<ChapterNextLessonGetArgs> = async (args, context) => {
 
   const userId = args.userId || !context.user!.id;
   

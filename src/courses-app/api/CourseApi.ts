@@ -1,9 +1,8 @@
 'use server';
 
 import {
-    CourseEnrollment,
+    UserCourseEnroll,
 } from "wasp/server/api";
-import { Course } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient();
@@ -14,7 +13,7 @@ const prisma = new PrismaClient();
  * @param courseId    Id del corso a cui iscriversi
  * @return            Oggetto iscrizione creato
  */
-export const courseEnrollment: CourseEnrollment = async (req, res, context) => {
+export const userCourseEnroll: UserCourseEnroll = async (req, res, context) => {
 
     try {
         // Ottieni l'ID del corso dalla richiesta
