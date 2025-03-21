@@ -2,12 +2,9 @@ import { isUserEnrolledInCourse, useQuery } from 'wasp/client/operations';
 import { courseEnrollment } from '../../../services/client/CourseServices';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Course } from 'wasp/entities';
 
-type EnrollContinueCourseButtonProps = {
-    courseId: string,
-}
-
-export default function EnrollContinueCourseButton({ courseId }: EnrollContinueCourseButtonProps) {
+export default function EnrollContinueCourseButton({ course }: { course: Course }) {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -17,7 +14,7 @@ export default function EnrollContinueCourseButton({ courseId }: EnrollContinueC
         isLoading,
         error
     } = useQuery(isUserEnrolledInCourse, {
-        courseId
+        courseId: course.id
     });
 
     // Store enrollment information when data is loaded
@@ -33,19 +30,24 @@ export default function EnrollContinueCourseButton({ courseId }: EnrollContinueC
         nextLessonId: ''
     });
 
+    const navigateToNextLesson = (lessonId: string) => {
+        navigate(`/app/play/lesson/${lessonId}`, { state: { course } });
+        return null;
+    };
+
     // Function to enroll in the course
     const enrollCourse = async () => {
         if (isProcessing) return;
 
         setIsProcessing(true);
         try {
-            const enrollmentResult = await courseEnrollment({ courseId });
+            const enrollmentResult = await courseEnrollment({ courseId: course.id });
 
             console.log("Iscrizione completata", enrollmentResult);
 
             if (enrollmentResult && enrollmentResult.nextLessonId) {
 
-                navigate(`/app/play/lesson/${enrollmentResult.nextLessonId}`);
+                navigateToNextLesson(enrollmentResult.nextLessonId);
             } else {
                 console.error("Missing nextLessonId in enrollment response");
             }
@@ -63,7 +65,7 @@ export default function EnrollContinueCourseButton({ courseId }: EnrollContinueC
 
         setIsProcessing(true);
         try {
-            navigate(`/app/play/lesson/${enrollment.nextLessonId}`);
+            navigateToNextLesson(enrollment.nextLessonId);
         } catch (error) {
             console.error("Errore durante la navigazione alla lezione:",
                 error instanceof Error ? error.message : 'Errore sconosciuto');

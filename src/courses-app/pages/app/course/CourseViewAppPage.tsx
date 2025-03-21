@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
-import { Course } from 'wasp/entities';
+import { Course, CourseCategory } from 'wasp/entities';
 import {
   useQuery,
   getCourse,
@@ -21,7 +21,7 @@ const CourseHeader = ({
   duration,
   backgroundImage,
   progress,
-  courseId,
+  course,
   onContinue,
   onShare,
   onBookmark,
@@ -33,7 +33,7 @@ const CourseHeader = ({
   duration: string,
   backgroundImage: string,
   progress: number,
-  courseId: string,
+  course: Course,
   onContinue: () => void,
   onShare: () => void,
   onBookmark: () => void,
@@ -75,7 +75,7 @@ const CourseHeader = ({
       {/* Pulsanti azione */}
       <div className="flex justify-between px-4 py-3 border-b border-gray-200">
       <EnrollContinueCourseButton
-        courseId={courseId}
+        course={course}
        />
 
         <div className="flex space-x-4">
@@ -194,7 +194,7 @@ export default function CourseViewAppPage() {
             onBookmark={() => console.log('Bookmark')}
             onInfo={() => console.log('Info')}
             onDownload={() => console.log('Download')}
-            courseId={course.id}
+            course={course}
           />
 
           {/* Descrizione del corso */}
@@ -251,13 +251,6 @@ export default function CourseViewAppPage() {
                 })}
               </div>
             )}
-          </div>
-
-          {/* CTAs finali */}
-          <div className="px-4 mb-8">
-            <button className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium mb-3">
-              Inizia/Continua il corso
-            </button>
           </div>
         </>
       )}

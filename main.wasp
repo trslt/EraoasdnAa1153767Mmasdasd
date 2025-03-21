@@ -722,6 +722,11 @@ query getChapterNextLesson {
 }
 // ======= Ottieni lezione successiva del capitolo
 
+query getLessonProgress {
+  fn: import { getLessonProgress } from "@src/courses-app/operations/app/LessonOperations",
+  entities: [CourseEnrollment, StudentProgress]
+}
+// ======= Progresso Lezione
 
 
 //                      QUIZ OPERATIONS
@@ -879,6 +884,14 @@ api LessonContentUpdate {
   entities: [LessonContent]
 }
 // ======= /api/admin/lesson/:lessonId/content ======= Aggiornamento contenuto lezione
+
+api LessonMarkComplete { 
+  fn: import { lessonMarkComplete } from "@src/courses-app/api/app/LessonApi",
+  httpRoute: (POST, "/api/lesson/:lessonId/complete"),
+  auth: true,
+  entities: [Lesson, CourseEnrollment, StudentProgress, Course]
+}
+// ======= /api/lesson/:lessonId/complete ======= Segna lezione come completata
 
 api QuestionCreate { 
   fn: import { questionCreate } from "@src/courses-app/api/admin/QuestionApi",
